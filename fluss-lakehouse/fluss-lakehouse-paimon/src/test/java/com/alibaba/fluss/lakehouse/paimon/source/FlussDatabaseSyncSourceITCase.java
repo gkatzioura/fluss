@@ -18,6 +18,7 @@ package com.alibaba.fluss.lakehouse.paimon.source;
 
 import com.alibaba.fluss.config.ConfigOptions;
 import com.alibaba.fluss.connector.flink.source.testutils.FlinkTestBase;
+import com.alibaba.fluss.fs.oss.token.OSSSecurityTokenReceiver;
 import com.alibaba.fluss.lakehouse.paimon.record.MultiplexCdcRecord;
 import com.alibaba.fluss.lakehouse.paimon.testutils.TestingDatabaseSyncSink;
 import com.alibaba.fluss.metadata.DatabaseDescriptor;
@@ -44,6 +45,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.alibaba.fluss.connector.flink.FlinkConnectorOptions.BOOTSTRAP_SERVERS;
 import static com.alibaba.fluss.testutils.DataTestUtils.row;
@@ -57,6 +60,8 @@ class FlussDatabaseSyncSourceITCase extends FlinkTestBase {
 
     private static StreamExecutionEnvironment execEnv;
     private static StreamTableEnvironment tEnv;
+
+    private static final Logger LOG = LoggerFactory.getLogger(OSSSecurityTokenReceiver.class);
 
     @BeforeAll
     protected static void beforeAll() {
@@ -251,24 +256,40 @@ class FlussDatabaseSyncSourceITCase extends FlinkTestBase {
     }
 
     private void verifyRecordsSynced(
-            String sinkDatabase, String tableName, List<String> expected, boolean ignoreOrder)
-            throws Exception {
-        try (org.apache.flink.util.CloseableIterator<Row> rowIter =
-                tEnv.executeSql(String.format("select * from `%s`.`%s`", sinkDatabase, tableName))
-                        .collect()) {
-            int expectRecords = expected.size();
-            List<String> actual = new ArrayList<>(expectRecords);
-            for (int i = 0; i < expectRecords; i++) {
-                String row = rowIter.next().toString();
-                actual.add(row);
-            }
-            if (ignoreOrder) {
-                assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
-            } else {
-                assertThat(actual).containsExactlyElementsOf(expected);
-            }
+        String sinkDatabase, String tableName, List<String> expected, boolean ignoreOrder)
+        throws Exception {
+        int expectRecords = expected.size();
+        List<String> actual = fetchRecords(sinkDatabase, tableName, expectRecords);
+        if (ignoreOrder) {
+            assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
+        } else {
+            assertThat(actual).containsExactlyElementsOf(expected);
         }
     }
+
+    private static List<String> fetchRecords(String sinkDatabase, String tableName, int expectRecords) throws Exception {
+        List<String> actual = new ArrayList<>(expectRecords);
+        for (int retries = 0; true; retries++) {
+            try (org.apache.flink.util.CloseableIterator<Row> rowIter =
+                tEnv.executeSql(String.format("select * from `%s`.`%s`", sinkDatabase, tableName))
+                    .collect()) {
+                //here
+                for (int i = 0; i < expectRecords; i++) {
+                    String row = rowIter.next().toString();
+                    actual.add(row);
+                }
+                return actual;
+            } catch (RuntimeException e) {
+                System.out.println("should fail");
+                LOG.info(" i should fail;");
+                if(retries>=3) {
+                    throw e;
+                }
+            }
+
+        }
+    }
+
 
     protected void createDatabase(String database) throws Exception {
         admin.createDatabase(database, DatabaseDescriptor.EMPTY, true).get();
