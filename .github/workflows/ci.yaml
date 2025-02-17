@@ -44,4 +44,4 @@ jobs:
         run: |
           mvn clean install -DskipTests
           cd fluss-lakehouse/fluss-lakehouse-paimon
-#          mvn test -Dtest=FlussDatabaseSyncSourceITCase
+          mvn test -Dtest=FlussDatabaseSyncSourceITCase
