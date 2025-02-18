@@ -253,21 +253,33 @@ class FlussDatabaseSyncSourceITCase extends FlinkTestBase {
     private void verifyRecordsSynced(
             String sinkDatabase, String tableName, List<String> expected, boolean ignoreOrder)
             throws Exception {
+        int expectRecords = expected.size();
+
+        Retry retry = new Retry(3, 1000L);
+
+        List<String> actual =
+                retry.execute(() -> retrieveRecords(sinkDatabase, tableName, expectRecords));
+
+        if (ignoreOrder) {
+            assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
+        } else {
+            assertThat(actual).containsExactlyElementsOf(expected);
+        }
+    }
+
+    private static List<String> retrieveRecords(
+            String sinkDatabase, String tableName, int expectRecords) throws Exception {
+        List<String> actual = new ArrayList<>(expectRecords);
+
         try (org.apache.flink.util.CloseableIterator<Row> rowIter =
                 tEnv.executeSql(String.format("select * from `%s`.`%s`", sinkDatabase, tableName))
                         .collect()) {
-            int expectRecords = expected.size();
-            List<String> actual = new ArrayList<>(expectRecords);
             for (int i = 0; i < expectRecords; i++) {
                 String row = rowIter.next().toString();
                 actual.add(row);
             }
-            if (ignoreOrder) {
-                assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
-            } else {
-                assertThat(actual).containsExactlyElementsOf(expected);
-            }
         }
+        return actual;
     }
 
     protected void createDatabase(String database) throws Exception {
