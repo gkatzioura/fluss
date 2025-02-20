@@ -280,11 +280,11 @@ class FlussDatabaseSyncSourceITCase extends FlinkTestBase {
                 }
                 return actual;
             } catch (RuntimeException e) {
-                System.out.println("should fail");
-                LOG.info(" i should fail;");
+                e.printStackTrace();
                 if(retries>=3) {
                     throw e;
                 }
+                LOG.info("Retry");
             }
 
         }
