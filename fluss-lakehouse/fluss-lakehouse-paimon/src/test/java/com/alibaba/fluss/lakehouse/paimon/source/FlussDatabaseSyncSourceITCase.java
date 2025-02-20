@@ -39,6 +39,7 @@ import org.apache.flink.types.Row;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,6 +48,7 @@ import java.util.Objects;
 
 import static com.alibaba.fluss.connector.flink.FlinkConnectorOptions.BOOTSTRAP_SERVERS;
 import static com.alibaba.fluss.testutils.DataTestUtils.row;
+import static com.alibaba.fluss.testutils.common.CommonTestUtils.retryOnException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /** The IT case for {@link FlussDatabaseSyncSource}. */
@@ -255,10 +257,7 @@ class FlussDatabaseSyncSourceITCase extends FlinkTestBase {
             throws Exception {
         int expectRecords = expected.size();
 
-        Retry retry = new Retry(3, 1000L);
-
-        List<String> actual =
-                retry.execute(() -> retrieveRecords(sinkDatabase, tableName, expectRecords));
+        List<String> actual = retryOnException(Duration.ofMinutes(1), () -> retrieveRecords(sinkDatabase, tableName, expectRecords));
 
         if (ignoreOrder) {
             assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
@@ -267,13 +266,13 @@ class FlussDatabaseSyncSourceITCase extends FlinkTestBase {
         }
     }
 
-    private static List<String> retrieveRecords(
-            String sinkDatabase, String tableName, int expectRecords) throws Exception {
+    private static List<String> retrieveRecords(String sinkDatabase, String tableName, int expectRecords)
+            throws Exception {
         List<String> actual = new ArrayList<>(expectRecords);
 
         try (org.apache.flink.util.CloseableIterator<Row> rowIter =
-                tEnv.executeSql(String.format("select * from `%s`.`%s`", sinkDatabase, tableName))
-                        .collect()) {
+                     tEnv.executeSql(String.format("select * from `%s`.`%s`", sinkDatabase, tableName))
+                             .collect()) {
             for (int i = 0; i < expectRecords; i++) {
                 String row = rowIter.next().toString();
                 actual.add(row);

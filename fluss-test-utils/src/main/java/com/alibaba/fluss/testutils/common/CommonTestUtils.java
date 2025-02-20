@@ -33,6 +33,7 @@ import java.lang.reflect.Field;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Fail.fail;
@@ -122,6 +123,46 @@ public class CommonTestUtils {
                 timeout,
                 errorMsg);
         return result.get();
+    }
+
+    /**
+     * Execute the callable task. If it throws an error matching the expected error type, retry.
+     * Repeat until no error is thrown or the time limit elapses.
+     */
+    public static  <E> E retryOnException(Duration timeout, Callable<E> callable) throws Exception{
+        return retryOnException(timeout, Exception.class, callable);
+    }
+
+    /**
+     * Execute the callable task. If it throws an error matching the expected error type, retry.
+     * Repeat until no error is thrown or the time limit elapses.
+     */
+    public static  <T extends Throwable, E> E retryOnException(Duration timeout, Class<T> exceptionType, Callable<E> callable) throws Exception{
+        final long maxWaitMs = timeout.toMillis();
+        long waitMs = 1L;
+        long startTime = System.currentTimeMillis();
+        while (true) {
+            try {
+                return callable.call();
+            } catch (Exception exception) {
+                if (!exceptionType.isInstance(exception)) {
+                    throw exception;
+                }
+                if (System.currentTimeMillis() - startTime >= maxWaitMs) {
+                    throw exception;
+                }
+                LOG.info("Attempt failed, sleeping for {} ms, and then retrying.", waitMs);
+                try {
+                    //noinspection BusyWait
+                    Thread.sleep(waitMs);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                waitMs += Math.min(waitMs, 1000L);
+            } catch (Throwable t) {
+                throw new AssertionError("Attempt failed.", t);
+            }
+        }
     }
 
     /**
