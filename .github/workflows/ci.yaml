@@ -20,6 +20,7 @@ on:
       - main
       - release-**
       - ci-**
+      - temporary208
   pull_request:
     paths-ignore:
       - 'website/**'
