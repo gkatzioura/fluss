@@ -129,7 +129,7 @@ public class CommonTestUtils {
      * Execute the callable task. If it throws an error matching the expected error type, retry.
      * Repeat until no error is thrown or the time limit elapses.
      */
-    public static  <E> E retryOnException(Duration timeout, Callable<E> callable) throws Exception{
+    public static <E> E retryOnException(Duration timeout, Callable<E> callable) throws Exception {
         return retryOnException(timeout, Exception.class, callable);
     }
 
@@ -137,7 +137,8 @@ public class CommonTestUtils {
      * Execute the callable task. If it throws an error matching the expected error type, retry.
      * Repeat until no error is thrown or the time limit elapses.
      */
-    public static  <T extends Throwable, E> E retryOnException(Duration timeout, Class<T> exceptionType, Callable<E> callable) throws Exception{
+    public static <T extends Throwable, E> E retryOnException(
+            Duration timeout, Class<T> exceptionType, Callable<E> callable) throws Exception {
         final long maxWaitMs = timeout.toMillis();
         long waitMs = 1L;
         long startTime = System.currentTimeMillis();
