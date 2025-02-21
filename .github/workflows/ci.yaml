@@ -44,4 +44,4 @@ jobs:
         timeout-minutes: 60
         run: |
           cd fluss-lakehouse/fluss-lakehouse-paimon
-          mvn test -Dtest=FlussDatabaseSyncSourceITCase
+          mvn clean test -Dtest=FlussDatabaseSyncSourceITCase
