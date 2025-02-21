@@ -268,6 +268,7 @@ class FlussDatabaseSyncSourceITCase extends FlinkTestBase {
     }
 
     private static List<String> fetchRecords(String sinkDatabase, String tableName, int expectRecords) throws Exception {
+        LOG.info("Fetch records");
         List<String> actual = new ArrayList<>(expectRecords);
         for (int retries = 0; true; retries++) {
             try (org.apache.flink.util.CloseableIterator<Row> rowIter =
