@@ -39,13 +39,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ServiceLoader;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
@@ -527,6 +521,42 @@ public abstract class FileSystem {
      */
     public abstract boolean rename(FsPath src, FsPath dst) throws IOException;
 
+    /**
+     * Creates a new {@link RecoverableWriter}. A recoverable writer creates streams that can
+     * persist and recover their intermediate state. Persisting and recovering intermediate state is
+     * a core building block for writing to files that span multiple checkpoints.
+     *
+     * <p>The returned object can act as a shared factory to open and recover multiple streams.
+     *
+     * <p>This method is optional on file systems and various file system implementations may not
+     * support this method, throwing an {@code UnsupportedOperationException}.
+     *
+     * @return A RecoverableWriter for this file system.
+     * @throws IOException Thrown, if the recoverable writer cannot be instantiated.
+     */
+    public RecoverableWriter createRecoverableWriter() throws IOException {
+        throw new UnsupportedOperationException(
+                "This file system does not support recoverable writers.");
+    }
+
+    /**
+     * Creates a new {@link RecoverableWriter}. A recoverable writer creates streams that can
+     * persist and recover their intermediate state. Persisting and recovering intermediate state is
+     * a core building block for writing to files that span multiple checkpoints.
+     *
+     * <p>The returned object can act as a shared factory to open and recover multiple streams.
+     *
+     * <p>This method is optional on file systems and various file system implementations may not
+     * support this method, throwing an {@code UnsupportedOperationException}.
+     *
+     * @param conf Map contains a flag to indicate whether the writer should not write to local
+     *     storage. and can provide more information to instantiate the writer.
+     * @return A RecoverableWriter for this file system.
+     * @throws IOException Thrown, if the recoverable writer cannot be instantiated.
+     */
+    public RecoverableWriter createRecoverableWriter(Map<String, String> conf) throws IOException {
+        return createRecoverableWriter();
+    }
     // ------------------------------------------------------------------------
 
     /**
