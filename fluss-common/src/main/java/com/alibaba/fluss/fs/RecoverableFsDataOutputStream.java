@@ -30,15 +30,14 @@ import java.io.IOException;
 public abstract class RecoverableFsDataOutputStream extends FSDataOutputStream {
 
     /**
-     * Ensures all data so far is persistent and returns a handle to
-     * recover the stream at the current position.
+     * Ensures all data so far is persistent and returns a handle to recover the stream at the
+     * current position.
      */
     public abstract RecoverableWriter.ResumeRecoverable persist() throws IOException;
 
     /**
-     * Closes the stream, ensuring persistence of all data. This
-     * returns a Committer that can be used to publish (make visible) the file that the stream was
-     * writing to.
+     * Closes the stream, ensuring persistence of all data. This returns a Committer that can be
+     * used to publish (make visible) the file that the stream was writing to.
      */
     public abstract Committer closeForCommit() throws IOException;
 

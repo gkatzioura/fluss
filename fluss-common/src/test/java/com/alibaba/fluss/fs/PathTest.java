@@ -256,5 +256,4 @@ class PathTest {
         assertThat(u.getAuthority()).isNull();
         assertThat(u.getPath()).isEqualTo(path);
     }
-
 }

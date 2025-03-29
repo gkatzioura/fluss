@@ -22,6 +22,8 @@ import com.alibaba.fluss.fs.FileSystem;
 import com.alibaba.fluss.fs.FileSystemPlugin;
 
 import com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,10 +37,11 @@ public class GSFileSystemPlugin implements FileSystemPlugin {
     private static final String[] FLUSS_CONFIG_PREFIXES = {"gs.", "fs.gs."};
 
     private static final String HADOOP_CONFIG_PREFIX = "fs.gs.";
+    public static final String SCHEME = "gs";
 
     @Override
     public String getScheme() {
-        return "gs";
+        return SCHEME;
     }
 
     @Override
@@ -46,9 +49,11 @@ public class GSFileSystemPlugin implements FileSystemPlugin {
         org.apache.hadoop.conf.Configuration hadoopConfig = getHadoopConfiguration(flussConfig);
 
         // create the Hadoop FileSystem
-        org.apache.hadoop.fs.FileSystem fs = new GoogleHadoopFileSystem();
+        GoogleHadoopFileSystem fs = new GoogleHadoopFileSystem();
         fs.initialize(getInitURI(fsUri, hadoopConfig), hadoopConfig);
-        return new GSFileSystem(getScheme(), fs, hadoopConfig);
+        Storage storage = StorageOptions.getDefaultInstance().getService();
+        ;
+        return new GSFileSystem(fs, storage, new GSFileSystemOptions(flussConfig));
     }
 
     org.apache.hadoop.conf.Configuration getHadoopConfiguration(Configuration flussConfig) {

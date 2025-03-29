@@ -27,16 +27,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.regex.Pattern;
 
-/* This file is based on source code of Apache Flink Project (https://flink.apache.org/), licensed by the Apache
- * Software Foundation (ASF) under the Apache License, Version 2.0. See the NOTICE file distributed with this work for
- * additional information regarding copyright ownership. */
-
 /**
  * Names a file or directory in a {@link FileSystem}. Path strings use slash as the directory
  * separator. A path string is absolute if it begins with a slash.
  *
  * <p>Tailing slashes are removed from the path.
- *
  */
 public class Path implements Serializable {
 

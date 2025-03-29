@@ -17,9 +17,18 @@
 package com.alibaba.fluss.fs.gs;
 
 import com.alibaba.fluss.fs.FileSystem;
+import com.alibaba.fluss.fs.RecoverableWriter;
+import com.alibaba.fluss.fs.gs.storage.GSBlobStorageImpl;
+import com.alibaba.fluss.fs.gs.writer.GSRecoverableWriter;
 import com.alibaba.fluss.fs.hdfs.HadoopFileSystem;
+import com.alibaba.fluss.utils.Preconditions;
 
-import org.apache.hadoop.conf.Configuration;
+import com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem;
+import com.google.cloud.storage.Storage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * Implementation of the Fluss {@link FileSystem} interface for Google Cloud Storage. This class
@@ -28,21 +37,29 @@ import org.apache.hadoop.conf.Configuration;
  */
 public class GSFileSystem extends HadoopFileSystem {
 
-    private final String scheme;
-    private final Configuration conf;
+    private static final Logger LOGGER = LoggerFactory.getLogger(GSFileSystem.class);
 
-    /**
-     * Creates a GSFileSystem based on the given Hadoop Google Cloud Storage file system. The given
-     * Hadoop file system object is expected to be initialized already.
-     *
-     * <p>This constructor additionally configures the entropy injection for the file system.
-     *
-     * @param hadoopGSFileSystem The Hadoop FileSystem that will be used under the hood.
-     */
-    public GSFileSystem(
-            String scheme, org.apache.hadoop.fs.FileSystem hadoopGSFileSystem, Configuration conf) {
-        super(hadoopGSFileSystem);
-        this.scheme = scheme;
-        this.conf = conf;
+    private final GSFileSystemOptions fileSystemOptions;
+
+    private final Storage storage;
+
+    GSFileSystem(
+            GoogleHadoopFileSystem googleHadoopFileSystem,
+            Storage storage,
+            GSFileSystemOptions fileSystemOptions) {
+        super(Preconditions.checkNotNull(googleHadoopFileSystem));
+        this.fileSystemOptions = Preconditions.checkNotNull(fileSystemOptions);
+        this.storage = Preconditions.checkNotNull(storage);
+    }
+
+    @Override
+    public RecoverableWriter createRecoverableWriter() throws IOException {
+        LOGGER.info("Creating GSRecoverableWriter with file-system options {}", fileSystemOptions);
+
+        // create the GS blob storage wrapper
+        GSBlobStorageImpl blobStorage = new GSBlobStorageImpl(storage);
+
+        // construct the recoverable writer with the blob storage wrapper and the options
+        return new GSRecoverableWriter(blobStorage, fileSystemOptions);
     }
 }
