@@ -18,6 +18,7 @@
 
 package com.alibaba.fluss.fs.gs;
 
+import com.alibaba.fluss.config.ConfigBuilder;
 import com.alibaba.fluss.config.Configuration;
 import com.alibaba.fluss.fs.FileSystem;
 import com.alibaba.fluss.fs.FileSystemPlugin;
@@ -34,8 +35,6 @@ import com.google.cloud.storage.StorageOptions;
 import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -65,10 +64,7 @@ public class GSFileSystemPlugin implements FileSystemPlugin {
 
         ConfigUtils.ConfigContext configContext = new RuntimeConfigContext();
 
-        org.apache.hadoop.conf.Configuration hadoopConfig = ConfigUtils.getHadoopConfiguration(configuration, configContext);
-
-        LOG.info(
-                "Using Hadoop configuration {}", ConfigUtils.stringifyHadoopConfig(hadoopConfig));
+        org.apache.hadoop.conf.Configuration hadoopConfig = getHadoopConfiguration(configuration);
 
         GSFileSystemOptions fileSystemOptions = new GSFileSystemOptions(configuration);
         LOG.info("Using file system options {}", fileSystemOptions);
@@ -85,18 +81,29 @@ public class GSFileSystemPlugin implements FileSystemPlugin {
 
         Storage storage = storageOptionsBuilder.build().getService();
 
-        Preconditions.checkNotNull(fsUri);
-
-        Preconditions.checkNotNull(fsUri);
-
         GoogleHadoopFileSystem googleHadoopFileSystem = new GoogleHadoopFileSystem();
         try {
-            googleHadoopFileSystem.initialize(fsUri, hadoopConfig);
+            googleHadoopFileSystem.initialize(getInitURI(fsUri, hadoopConfig), hadoopConfig);
         } catch (IOException ex) {
             throw new IOException("Failed to initialize GoogleHadoopFileSystem", ex);
         }
 
         return new GSFileSystem(googleHadoopFileSystem, storage, fileSystemOptions);
+    }
+
+    private URI getInitURI(URI fsUri, org.apache.hadoop.conf.Configuration hadoopConfig) {
+        final String scheme = fsUri.getScheme();
+        final String authority = fsUri.getAuthority();
+
+        if (scheme == null && authority == null) {
+            fsUri = org.apache.hadoop.fs.FileSystem.getDefaultUri(hadoopConfig);
+        } else if (scheme != null && authority == null) {
+            URI defaultUri = org.apache.hadoop.fs.FileSystem.getDefaultUri(hadoopConfig);
+            if (scheme.equals(defaultUri.getScheme()) && defaultUri.getAuthority() != null) {
+                fsUri = defaultUri;
+            }
+        }
+        return fsUri;
     }
 
     private HttpTransportOptions getHttpTransportOptions(GSFileSystemOptions fileSystemOptions) {
@@ -155,4 +162,26 @@ public class GSFileSystemPlugin implements FileSystemPlugin {
         }
     }
 
+    org.apache.hadoop.conf.Configuration getHadoopConfiguration(Configuration flussConfig) {
+        org.apache.hadoop.conf.Configuration conf = new org.apache.hadoop.conf.Configuration();
+        if (flussConfig == null) {
+            return conf;
+        }
+
+        for (String key : flussConfig.keySet()) {
+            for (String prefix : FLUSS_CONFIG_PREFIXES) {
+                if (key.startsWith(prefix)) {
+                    String newKey = HADOOP_CONFIG_PREFIX + key.substring(prefix.length());
+                    String newValue =
+                            flussConfig.getString(
+                                    ConfigBuilder.key(key).stringType().noDefaultValue(), null);
+                    conf.set(newKey, newValue);
+
+                    LOG.debug(
+                            "Adding Fluss config entry for {} as {} to Hadoop config", key, newKey);
+                }
+            }
+        }
+        return conf;
+    }
 }

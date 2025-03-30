@@ -16,9 +16,6 @@
 
 package com.alibaba.fluss.fs.gs.utils;
 
-import com.alibaba.fluss.config.Configuration;
-import com.alibaba.fluss.fs.hdfs.utils.HadoopUtils;
-
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystemConfiguration;
 import org.slf4j.Logger;
@@ -39,10 +36,6 @@ public class ConfigUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigUtils.class);
 
-    private static final String HADOOP_CONFIG_PREFIX = "fs.gs.";
-
-    private static final String[] FLINK_CONFIG_PREFIXES = {"gs.", HADOOP_CONFIG_PREFIX};
-
     private static final String[][] MIRRORED_CONFIG_KEYS = {};
 
     private static final String FLINK_SHADING_PREFIX = "";
@@ -52,44 +45,6 @@ public class ConfigUtils {
 
     private static final String HADOOP_OPTION_SERVICE_ACCOUNT_JSON_KEYFILE =
             "google.cloud.auth.service.account.json.keyfile";
-
-    /**
-     * Loads the Hadoop configuration, by loading from a Hadoop conf dir (if one exists) and then
-     * overlaying properties derived from the Flink config.
-     *
-     * @param flinkConfig The Flink config
-     * @param configContext The config context.
-     * @return The Hadoop config.
-     */
-    public static org.apache.hadoop.conf.Configuration getHadoopConfiguration(
-            Configuration flinkConfig, ConfigContext configContext) {
-
-        // create a starting hadoop configuration
-        org.apache.hadoop.conf.Configuration hadoopConfig =
-                new org.apache.hadoop.conf.Configuration();
-
-        // look for a hadoop configuration directory and load configuration from it if found
-        // TODO
-        Optional<String> hadoopConfigDir = Optional.empty();
-        //                Optional.ofNullable(flinkConfig.get(CoreOptions.FLINK_HADOOP_CONF_DIR));
-        if (!hadoopConfigDir.isPresent()) {
-            hadoopConfigDir = configContext.getenv("HADOOP_CONF_DIR");
-        }
-        hadoopConfigDir.ifPresent(
-                configDir -> {
-                    LOGGER.info("Loading Hadoop config resources from {}", configDir);
-                    hadoopConfig.addResource(configContext.loadHadoopConfigFromDir(configDir));
-                });
-
-        // now, load hadoop config from flink and add to base hadoop config
-        org.apache.hadoop.conf.Configuration flinkHadoopConfig =
-                HadoopUtils.getHadoopConfiguration(flinkConfig);
-        hadoopConfig.addResource(flinkHadoopConfig);
-
-        // reload the config resources and return it
-        hadoopConfig.reloadConfiguration();
-        return hadoopConfig;
-    }
 
     /**
      * Creates an (optional) GoogleCredentials instance for the given Hadoop config and environment.
