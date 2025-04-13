@@ -17,29 +17,47 @@
 package com.alibaba.fluss.flink.metrics;
 
 import com.alibaba.fluss.metrics.Meter;
+import com.alibaba.fluss.metrics.util.TestMeter;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.flink.metrics.MetricType;
+import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-public class FlinkMeterTest extends WrapperMetricsTestSuite<Meter, FlinkMeter> {
+public class FlinkMeterTest {
 
-    private FlinkMeter flinkMeter;
-    private Meter meter;
+    private static final double DELTA = 0.0001;
 
-    @BeforeEach
-    void setUp() {
-        meter = mock(Meter.class);
-        flinkMeter = new FlinkMeter(meter);
+    @Test
+    void testWrapper() {
+        Meter meter = new TestMeter();
+
+        FlinkMeter wrapper = new FlinkMeter(meter);
+        assertThat(wrapper.getCount()).isEqualTo(100);
+        assertThat(wrapper.getRate()).isEqualTo(5);
+        assertThat(wrapper.getMetricType()).isEqualTo(MetricType.METER);
+        assertThat(wrapper.getCount()).isEqualTo(100L);
     }
 
-    @Override
-    protected Meter getWrappedMetricInstance() throws Exception {
-        return meter;
+    @Test
+    void testMarkEvent() {
+        Meter meter = mock(Meter.class);
+
+        FlinkMeter wrapper = new FlinkMeter(meter);
+        wrapper.markEvent();
+
+        verify(meter).markEvent();
     }
 
-    @Override
-    protected FlinkMeter getMetricInstance() throws Exception {
-        return flinkMeter;
+    @Test
+    void testMarkEventN() {
+        Meter meter = mock(Meter.class);
+
+        FlinkMeter wrapper = new FlinkMeter(meter);
+        wrapper.markEvent(10L);
+
+        verify(meter).markEvent(10L);
     }
 }

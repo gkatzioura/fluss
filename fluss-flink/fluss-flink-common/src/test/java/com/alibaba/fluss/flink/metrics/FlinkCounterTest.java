@@ -17,29 +17,27 @@
 package com.alibaba.fluss.flink.metrics;
 
 import com.alibaba.fluss.metrics.Counter;
+import com.alibaba.fluss.metrics.util.TestCounter;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.mockito.Mockito.mock;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-class FlinkCounterTest extends WrapperMetricsTestSuite<Counter, FlinkCounter> {
+class FlinkCounterTest {
 
-    private FlinkCounter flinkCounter;
-    private Counter counter;
+    @Test
+    void testWrapperIncDec() {
+        Counter counter = new TestCounter();
+        counter.inc();
 
-    @BeforeEach
-    void setUp() {
-        counter = mock(Counter.class);
-        flinkCounter = new FlinkCounter(counter);
-    }
-
-    @Override
-    protected Counter getWrappedMetricInstance() throws Exception {
-        return counter;
-    }
-
-    @Override
-    protected FlinkCounter getMetricInstance() throws Exception {
-        return flinkCounter;
+        FlinkCounter wrapper = new FlinkCounter(counter);
+        assertThat(wrapper.getCount()).isEqualTo(1L);
+        wrapper.dec();
+        assertThat(wrapper.getCount()).isEqualTo(0L);
+        wrapper.inc();
+        wrapper.inc(1);
+        assertThat(wrapper.getCount()).isEqualTo(2L);
+        wrapper.dec(2);
+        assertThat(wrapper.getCount()).isEqualTo(0L);
     }
 }

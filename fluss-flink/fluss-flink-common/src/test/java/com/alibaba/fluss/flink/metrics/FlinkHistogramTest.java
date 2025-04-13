@@ -17,29 +17,44 @@
 package com.alibaba.fluss.flink.metrics;
 
 import com.alibaba.fluss.metrics.Histogram;
+import com.alibaba.fluss.metrics.util.TestHistogram;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.flink.metrics.HistogramStatistics;
+import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-public class FlinkHistogramTest extends WrapperMetricsTestSuite<Histogram, FlinkHistogram> {
+public class FlinkHistogramTest {
 
-    private FlinkHistogram flinkHistogram;
-    private Histogram histogram;
+    @Test
+    void testHistogramWrapper() {
+        int size = 3;
+        TestHistogram testHistogram = new TestHistogram();
+        FlinkHistogram histogram = new FlinkHistogram(testHistogram);
+        HistogramStatistics statistics = histogram.getStatistics();
+        assertThat(histogram.getCount()).isEqualTo(1);
+        assertThat(statistics.size()).isEqualTo(statistics.size());
+        assertThat(statistics.getMax()).isEqualTo(6);
+        assertThat(statistics.getMin()).isEqualTo(7);
+        assertThat(statistics.getMean()).isEqualTo(4);
+        assertThat(statistics.getStdDev()).isEqualTo(5);
+        assertThat(statistics.getValues()).isEqualTo(new long[0]);
 
-    @BeforeEach
-    void setUp() {
-        histogram = mock(Histogram.class);
-        flinkHistogram = new FlinkHistogram(histogram);
+        statistics = histogram.getStatistics();
+        assertThat(statistics.size()).isEqualTo(size);
+
+        assertThat(statistics.getQuantile(0.5d)).isEqualTo(0.5d);
     }
 
-    @Override
-    protected Histogram getWrappedMetricInstance() throws Exception {
-        return histogram;
-    }
+    @Test
+    void testUpdate() {
+        Histogram histogram = mock(Histogram.class);
 
-    @Override
-    protected FlinkHistogram getMetricInstance() throws Exception {
-        return flinkHistogram;
+        FlinkHistogram wrapper = new FlinkHistogram(histogram);
+        wrapper.update(10L);
+
+        verify(histogram).update(10L);
     }
 }
