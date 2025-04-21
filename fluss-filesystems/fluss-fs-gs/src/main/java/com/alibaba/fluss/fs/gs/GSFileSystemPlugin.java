@@ -46,7 +46,7 @@ public class GSFileSystemPlugin implements FileSystemPlugin {
         org.apache.hadoop.conf.Configuration hadoopConfig = getHadoopConfiguration(flussConfig);
 
         // create the Google Hadoop FileSystem
-        org.apache.hadoop.fs.FileSystem fs = new GoogleHadoopFileSystem();
+        GoogleHadoopFileSystem fs = new GoogleHadoopFileSystem();
         fs.initialize(getInitURI(fsUri, hadoopConfig), hadoopConfig);
         return new GSFileSystem(getScheme(), fs, hadoopConfig);
     }

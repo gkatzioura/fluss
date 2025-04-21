@@ -17,9 +17,22 @@
 package com.alibaba.fluss.fs.gs;
 
 import com.alibaba.fluss.fs.FileSystem;
+import com.alibaba.fluss.fs.gs.token.GSTokenProvider;
 import com.alibaba.fluss.fs.hdfs.HadoopFileSystem;
 
+import com.alibaba.fluss.fs.token.ObtainedSecurityToken;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem;
+import com.google.cloud.hadoop.fs.gcs.auth.GcsDelegationTokens;
+import com.google.cloud.hadoop.gcsio.GoogleCloudStorageFileSystemOptions;
+import com.google.cloud.hadoop.util.AccessTokenProvider;
+import com.google.cloud.hadoop.util.CredentialFactory;
+import com.google.cloud.hadoop.util.CredentialFromAccessTokenProviderClassFactory;
+import com.google.cloud.hadoop.util.HadoopCredentialConfiguration;
+import com.google.common.collect.ImmutableList;
 import org.apache.hadoop.conf.Configuration;
+
+import java.io.IOException;
 
 /**
  * Implementation of the Fluss {@link FileSystem} interface for Google Cloud Storage. This class
@@ -31,6 +44,7 @@ public class GSFileSystem extends HadoopFileSystem {
     private final String scheme;
     private final Configuration conf;
 
+    private volatile GSTokenProvider gsTokenProvider;
     /**
      * Creates a GSFileSystem based on the given Hadoop Google Cloud Storage file system. The given
      * Hadoop file system object is expected to be initialized already.
@@ -39,10 +53,22 @@ public class GSFileSystem extends HadoopFileSystem {
      *
      * @param hadoopGSFileSystem The Hadoop FileSystem that will be used under the hood.
      */
-    public GSFileSystem(
-            String scheme, org.apache.hadoop.fs.FileSystem hadoopGSFileSystem, Configuration conf) {
+    public GSFileSystem(String scheme, GoogleHadoopFileSystem hadoopGSFileSystem, Configuration conf) {
         super(hadoopGSFileSystem);
         this.scheme = scheme;
         this.conf = conf;
+    }
+
+    @Override
+    public ObtainedSecurityToken obtainSecurityToken() throws IOException {
+        if(gsTokenProvider==null) {
+            synchronized (this) {
+                if(gsTokenProvider==null) {
+                    gsTokenProvider = new GSTokenProvider(scheme, conf);
+                }
+            }
+        }
+
+        return gsTokenProvider.obtainSecurityToken();
     }
 }

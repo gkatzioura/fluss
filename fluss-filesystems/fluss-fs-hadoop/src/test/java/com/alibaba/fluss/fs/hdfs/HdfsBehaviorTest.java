@@ -69,9 +69,9 @@ class HdfsBehaviorTest extends FileSystemBehaviorTestSuite {
     @AfterAll
     static void destroyHDFS() throws Exception {
         if (hdfsCluster != null) {
-            hdfsCluster
-                    .getFileSystem()
-                    .delete(new org.apache.hadoop.fs.Path(basePath.toUri()), true);
+//            hdfsCluster
+//                    .getFileSystem()
+//                    .delete(new org.apache.hadoop.fs.Path(basePath.toUri()), true);
             hdfsCluster.shutdown();
         }
     }
