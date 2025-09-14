@@ -71,7 +71,7 @@ public class GSImpersonatedTokenProvider {
                 ImpersonatedCredentials.newBuilder()
                         .setSourceCredentials(googleCredentials)
                         .setTargetPrincipal(targetPrincipal)
-                        .setScopes(List.of(scope))
+                        .setScopes(scopes)
                         .setLifetime(3600)
                         .setDelegates(null)
                         .build();
