@@ -21,7 +21,11 @@ import org.apache.fluss.exception.FlussRuntimeException;
 import org.apache.fluss.fs.token.CredentialsJsonSerde;
 import org.apache.fluss.fs.token.ObtainedSecurityToken;
 
-import com.google.auth.oauth2.*;
+import com.google.auth.oauth2.AccessToken;
+import com.google.auth.oauth2.ComputeEngineCredentials;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.oauth2.ImpersonatedCredentials;
+import com.google.auth.oauth2.ServiceAccountCredentials;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hadoop.conf.Configuration;
 import org.slf4j.Logger;
@@ -32,9 +36,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.google.cloud.hadoop.util.HadoopCredentialConfiguration.*;
+import static com.google.cloud.hadoop.util.HadoopCredentialConfiguration.SERVICE_ACCOUNT_JSON_KEYFILE_SUFFIX;
 import static org.apache.fluss.fs.gs.GSFileSystemPlugin.HADOOP_CONFIG_PREFIX;
 
+/** Impersonation token provider for GCS Hadoop filesystems. */
 public class GSImpersonatedTokenProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(GSImpersonatedTokenProvider.class);

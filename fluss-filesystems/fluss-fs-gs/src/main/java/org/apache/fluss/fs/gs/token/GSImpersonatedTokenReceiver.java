@@ -27,6 +27,7 @@ import com.google.cloud.hadoop.util.AccessTokenProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Security token receiver for GCS filesystem. */
 public class GSImpersonatedTokenReceiver implements SecurityTokenReceiver {
 
     public static final String PROVIDER_CONFIG_NAME = "fs.gs.auth.access.token.provider.impl";
