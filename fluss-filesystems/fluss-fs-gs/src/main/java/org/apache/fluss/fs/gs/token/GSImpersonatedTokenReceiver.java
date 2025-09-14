@@ -17,12 +17,13 @@
 
 package org.apache.fluss.fs.gs.token;
 
-import com.google.cloud.hadoop.util.AccessTokenProvider;
 import org.apache.fluss.exception.FlussRuntimeException;
 import org.apache.fluss.fs.token.Credentials;
 import org.apache.fluss.fs.token.CredentialsJsonSerde;
 import org.apache.fluss.fs.token.ObtainedSecurityToken;
 import org.apache.fluss.fs.token.SecurityTokenReceiver;
+
+import com.google.cloud.hadoop.util.AccessTokenProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,6 @@ public class GSImpersonatedTokenReceiver implements SecurityTokenReceiver {
     private static final Logger LOG = LoggerFactory.getLogger(GSImpersonatedTokenReceiver.class);
 
     static volatile AccessTokenProvider.AccessToken accessToken;
-
 
     public static void updateHadoopConfig(org.apache.hadoop.conf.Configuration hadoopConfig) {
         LOG.info("Updating Hadoop configuration");
@@ -55,7 +55,8 @@ public class GSImpersonatedTokenReceiver implements SecurityTokenReceiver {
         }
 
         if (accessToken == null) {
-            throw new FlussRuntimeException(GSImperonatedAccessTokenProvider.COMPONENT + " not set");
+            throw new FlussRuntimeException(
+                    GSImperonatedAccessTokenProvider.COMPONENT + " not set");
         }
 
         LOG.info("Updated Hadoop configuration successfully");
@@ -74,7 +75,9 @@ public class GSImpersonatedTokenReceiver implements SecurityTokenReceiver {
 
         Credentials credentials = CredentialsJsonSerde.fromJson(tokenBytes);
 
-        accessToken = new AccessTokenProvider.AccessToken(credentials.getSecurityToken(),token.getValidUntil().get());
+        accessToken =
+                new AccessTokenProvider.AccessToken(
+                        credentials.getSecurityToken(), token.getValidUntil().get());
 
         LOG.info(
                 "Session credentials updated successfully with access key: {}.",
@@ -84,5 +87,4 @@ public class GSImpersonatedTokenReceiver implements SecurityTokenReceiver {
     public static AccessTokenProvider.AccessToken getAccessToken() {
         return accessToken;
     }
-
 }

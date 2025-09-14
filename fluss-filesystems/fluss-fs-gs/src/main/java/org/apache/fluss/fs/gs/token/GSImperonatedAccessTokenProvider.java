@@ -17,14 +17,14 @@
 
 package org.apache.fluss.fs.gs.token;
 
-import com.google.cloud.hadoop.util.AccessTokenProvider;
 import org.apache.fluss.exception.FlussRuntimeException;
+
+import com.google.cloud.hadoop.util.AccessTokenProvider;
 import org.apache.hadoop.conf.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-
 
 /** Delegation token provider for GCS Hadoop filesystems. */
 public class GSImperonatedAccessTokenProvider implements AccessTokenProvider {
@@ -43,7 +43,8 @@ public class GSImperonatedAccessTokenProvider implements AccessTokenProvider {
         AccessTokenProvider.AccessToken accessToken = GSImpersonatedTokenReceiver.getAccessToken();
 
         if (accessToken == null) {
-            throw new FlussRuntimeException(GSImperonatedAccessTokenProvider.COMPONENT + " not set");
+            throw new FlussRuntimeException(
+                    GSImperonatedAccessTokenProvider.COMPONENT + " not set");
         }
 
         LOG.debug("Providing session credentials");
@@ -65,5 +66,4 @@ public class GSImperonatedAccessTokenProvider implements AccessTokenProvider {
     public Configuration getConf() {
         return configuration;
     }
-
 }

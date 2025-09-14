@@ -17,11 +17,12 @@
 
 package org.apache.fluss.fs.gs.token;
 
-import com.google.auth.oauth2.*;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.fluss.exception.FlussRuntimeException;
 import org.apache.fluss.fs.token.CredentialsJsonSerde;
 import org.apache.fluss.fs.token.ObtainedSecurityToken;
+
+import com.google.auth.oauth2.*;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hadoop.conf.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,6 @@ import java.util.List;
 
 import static com.google.cloud.hadoop.util.HadoopCredentialConfiguration.*;
 import static org.apache.fluss.fs.gs.GSFileSystemPlugin.HADOOP_CONFIG_PREFIX;
-
 
 public class GSImpersonatedTokenProvider {
 
@@ -48,7 +48,7 @@ public class GSImpersonatedTokenProvider {
 
     public GSImpersonatedTokenProvider(String scheme, Configuration conf) {
         this.scheme = scheme;
-        Pair<String,GoogleCredentials> pair = extractProvider(conf);
+        Pair<String, GoogleCredentials> pair = extractProvider(conf);
         googleCredentials = pair.getValue();
         targetPrincipal = pair.getKey();
     }
@@ -58,14 +58,14 @@ public class GSImpersonatedTokenProvider {
 
         String scope = "https://www.googleapis.com/auth/cloud-platform";
 
-        ImpersonatedCredentials impersonatedCredentials =  ImpersonatedCredentials.newBuilder()
-                .setSourceCredentials(googleCredentials)
-                .setTargetPrincipal(targetPrincipal)
-                .setScopes(List.of(scope))
-                .setLifetime(3600)
-                .setDelegates(null)
-                .build();
-
+        ImpersonatedCredentials impersonatedCredentials =
+                ImpersonatedCredentials.newBuilder()
+                        .setSourceCredentials(googleCredentials)
+                        .setTargetPrincipal(targetPrincipal)
+                        .setScopes(List.of(scope))
+                        .setLifetime(3600)
+                        .setDelegates(null)
+                        .build();
 
         AccessToken accessToken = impersonatedCredentials.getAccessToken();
         LOG.info(
@@ -73,23 +73,23 @@ public class GSImpersonatedTokenProvider {
                 accessToken.getExpirationTime());
 
         return new ObtainedSecurityToken(
-                scheme, toJson(accessToken),  accessToken.getExpirationTime().getTime(), new HashMap<>());
+                scheme,
+                toJson(accessToken),
+                accessToken.getExpirationTime().getTime(),
+                new HashMap<>());
     }
 
     private byte[] toJson(AccessToken accessToken) {
         org.apache.fluss.fs.token.Credentials flussCredentials =
-                new org.apache.fluss.fs.token.Credentials(
-                        null,
-                        null,
-                        accessToken.getTokenValue());
+                new org.apache.fluss.fs.token.Credentials(null, null, accessToken.getTokenValue());
         return CredentialsJsonSerde.toJson(flussCredentials);
     }
 
-    private static Pair<String,GoogleCredentials> extractProvider(Configuration conf) {
+    private static Pair<String, GoogleCredentials> extractProvider(Configuration conf) {
         final String authType = conf.get(HADOOP_CONFIG_PREFIX + AUTH_TYPE_SUFFIX);
         if (authType.equals("COMPUTE_ENGINE")) {
             ComputeEngineCredentials credentials = getComputeEngineCredentials();
-            return Pair.of(credentials.getAccount(),credentials);
+            return Pair.of(credentials.getAccount(), credentials);
         } else if (authType.equals("SERVICE_ACCOUNT_JSON_KEYFILE")) {
             ServiceAccountCredentials credentials = getServiceAccountCredentials(conf);
             return Pair.of(credentials.getAccount(), credentials);
@@ -108,16 +108,16 @@ public class GSImpersonatedTokenProvider {
 
     private static ServiceAccountCredentials getServiceAccountCredentials(Configuration conf) {
         String keyFile =
-                SERVICE_ACCOUNT_JSON_KEYFILE_SUFFIX.withPrefixes(List.of(HADOOP_CONFIG_PREFIX))
+                SERVICE_ACCOUNT_JSON_KEYFILE_SUFFIX
+                        .withPrefixes(List.of(HADOOP_CONFIG_PREFIX))
                         .get(conf, conf::get);
         try (FileInputStream fis = new FileInputStream(keyFile)) {
-            ServiceAccountCredentials accountCredentials = ServiceAccountCredentials.fromStream(fis);
+            ServiceAccountCredentials accountCredentials =
+                    ServiceAccountCredentials.fromStream(fis);
             accountCredentials.getAccount();
             return accountCredentials;
         } catch (IOException e) {
-            throw new FlussRuntimeException(
-                    "Fail to read service account json file" + e);
+            throw new FlussRuntimeException("Fail to read service account json file" + e);
         }
     }
-
 }

@@ -20,8 +20,8 @@ package org.apache.fluss.fs.gs;
 import org.apache.fluss.fs.FileSystem;
 import org.apache.fluss.fs.gs.token.GSImpersonatedTokenProvider;
 import org.apache.fluss.fs.hdfs.HadoopFileSystem;
-
 import org.apache.fluss.fs.token.ObtainedSecurityToken;
+
 import org.apache.hadoop.conf.Configuration;
 
 // TODO: implement obtainSecurityToken to enable clients access the Google File System
