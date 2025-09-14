@@ -64,7 +64,7 @@ public class GSImpersonatedTokenProvider {
 
         String scope = "https://www.googleapis.com/auth/cloud-platform";
 
-        List<String> scopes = List.of(scope);
+        List<String> scopes = new ArrayList<>();
         scopes.add(scope);
 
         ImpersonatedCredentials impersonatedCredentials =
