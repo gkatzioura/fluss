@@ -120,9 +120,7 @@ public class GSImpersonatedTokenProvider {
         prefixes.add(HADOOP_CONFIG_PREFIX);
 
         String keyFile =
-                SERVICE_ACCOUNT_JSON_KEYFILE_SUFFIX
-                        .withPrefixes(prefixes)
-                        .get(conf, conf::get);
+                SERVICE_ACCOUNT_JSON_KEYFILE_SUFFIX.withPrefixes(prefixes).get(conf, conf::get);
         try (FileInputStream fis = new FileInputStream(keyFile)) {
             ServiceAccountCredentials accountCredentials =
                     ServiceAccountCredentials.fromStream(fis);
