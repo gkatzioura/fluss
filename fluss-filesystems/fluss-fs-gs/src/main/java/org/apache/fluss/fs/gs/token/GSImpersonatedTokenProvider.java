@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -62,6 +63,9 @@ public class GSImpersonatedTokenProvider {
         LOG.info("Obtaining session credentials token");
 
         String scope = "https://www.googleapis.com/auth/cloud-platform";
+
+        List<String> scopes = List.of(scope);
+        scopes.add(scope);
 
         ImpersonatedCredentials impersonatedCredentials =
                 ImpersonatedCredentials.newBuilder()
@@ -112,9 +116,12 @@ public class GSImpersonatedTokenProvider {
     }
 
     private static ServiceAccountCredentials getServiceAccountCredentials(Configuration conf) {
+        List<String> prefixes = new ArrayList<>();
+        prefixes.add(HADOOP_CONFIG_PREFIX);
+
         String keyFile =
                 SERVICE_ACCOUNT_JSON_KEYFILE_SUFFIX
-                        .withPrefixes(List.of(HADOOP_CONFIG_PREFIX))
+                        .withPrefixes(prefixes)
                         .get(conf, conf::get);
         try (FileInputStream fis = new FileInputStream(keyFile)) {
             ServiceAccountCredentials accountCredentials =
