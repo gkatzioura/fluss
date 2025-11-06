@@ -1,6 +1,6 @@
 ---
 title: Upgrading and Compatibility
-sidebar_position: 1
+sidebar_position: 3
 ---
 
 As an online storage service, Fluss is typically designed to operate over extended periods, often spanning several years.
@@ -80,10 +80,10 @@ Once this process is complete, the server upgrade will be finished.
 The compatibility between the Fluss client and the Fluss server is described in the following table:
 
 
-|            | Server 0.6 | Server 0.7 | Limitations |
+|            | Server 0.7 | Server 0.8 | Limitations |
 |------------|------------|------------|-------------|
-| Client 0.6 | ✔️         | ✔️         |             |
 | Client 0.7 | ✔️         | ✔️         |             |
+| Client 0.8 | ✔️         | ✔️         |             |
 
 ## Upgrading Fluss datalake tiering service
 

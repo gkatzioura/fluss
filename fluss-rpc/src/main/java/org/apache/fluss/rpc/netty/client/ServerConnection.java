@@ -17,6 +17,7 @@
 
 package org.apache.fluss.rpc.netty.client;
 
+import org.apache.fluss.annotation.VisibleForTesting;
 import org.apache.fluss.cluster.ServerNode;
 import org.apache.fluss.exception.DisconnectException;
 import org.apache.fluss.exception.FlussRuntimeException;
@@ -28,7 +29,7 @@ import org.apache.fluss.rpc.messages.ApiVersionsResponse;
 import org.apache.fluss.rpc.messages.AuthenticateRequest;
 import org.apache.fluss.rpc.messages.AuthenticateResponse;
 import org.apache.fluss.rpc.metrics.ClientMetricGroup;
-import org.apache.fluss.rpc.metrics.ConnectionMetricGroup;
+import org.apache.fluss.rpc.metrics.ConnectionMetrics;
 import org.apache.fluss.rpc.protocol.ApiKeys;
 import org.apache.fluss.rpc.protocol.ApiManager;
 import org.apache.fluss.rpc.protocol.ApiMethod;
@@ -57,7 +58,7 @@ import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 import static org.apache.fluss.utils.IOUtils.closeQuietly;
 
@@ -71,7 +72,7 @@ final class ServerConnection {
     // TODO: add max inflight requests limit like Kafka's "max.in.flight.requests.per.connection"
     private final Map<Integer, InflightRequest> inflightRequests = MapUtils.newConcurrentHashMap();
     private final CompletableFuture<Void> closeFuture = new CompletableFuture<>();
-    private final ConnectionMetricGroup connectionMetricGroup;
+    private final ConnectionMetrics connectionMetrics;
     private final ClientAuthenticator authenticator;
     private final ExponentialBackoff backoff;
 
@@ -103,15 +104,20 @@ final class ServerConnection {
             ServerNode node,
             ClientMetricGroup clientMetricGroup,
             ClientAuthenticator authenticator,
+            BiConsumer<ServerConnection, Throwable> closeCallback,
             boolean isInnerClient) {
         this.node = node;
         this.state = ConnectionState.CONNECTING;
-        this.connectionMetricGroup = clientMetricGroup.createConnectionMetricGroup(node.uid());
+        this.connectionMetrics = clientMetricGroup.createConnectionMetricGroup(node.uid());
+        this.authenticator = authenticator;
+        this.backoff = new ExponentialBackoff(100L, 2, 5000L, 0.2);
+        whenClose(closeCallback);
+
+        // connect and handle should be last in case of other variables are nullable and close
+        // callback is not registered when connection established.
         bootstrap
                 .connect(node.host(), node.port())
                 .addListener(future -> establishConnection((ChannelFuture) future, isInnerClient));
-        this.authenticator = authenticator;
-        this.backoff = new ExponentialBackoff(100L, 2, 5000L, 0.2);
     }
 
     public ServerNode getServerNode() {
@@ -130,8 +136,8 @@ final class ServerConnection {
     }
 
     /** Register a callback to be called when the connection is closed. */
-    public void whenClose(Consumer<Throwable> closeCallback) {
-        closeFuture.whenComplete((v, throwable) -> closeCallback.accept(throwable));
+    private void whenClose(BiConsumer<ServerConnection, Throwable> closeCallback) {
+        closeFuture.whenComplete((v, throwable) -> closeCallback.accept(this, throwable));
     }
 
     /** Close the connection. */
@@ -170,42 +176,21 @@ final class ServerConnection {
             }
 
             if (channel != null) {
-                channel.close()
-                        .addListener(
-                                (ChannelFutureListener)
-                                        future -> {
-
-                                            // when finishing, if netty successfully closes the
-                                            // channel, then the provided exception is used as
-                                            // the reason for the closing. If there was something
-                                            // wrong at the netty side, then that exception is
-                                            // prioritized over the provided one.
-                                            if (future.isSuccess()) {
-                                                if (cause instanceof ClosedChannelException) {
-                                                    // the ClosedChannelException is expected
-                                                    closeFuture.complete(null);
-                                                } else {
-                                                    closeFuture.completeExceptionally(cause);
-                                                }
-                                            } else {
-                                                LOG.warn(
-                                                        "Something went wrong when trying to close connection due to : ",
-                                                        cause);
-                                                closeFuture.completeExceptionally(future.cause());
-                                            }
-                                        });
-            } else {
-                // TODO all return completeExceptionally will let some test cases blocked, so we
-                // need to find why the test cases are blocked and remove the if statement.
-                if (cause.getCause() instanceof ConnectException) {
-                    // the ConnectException is expected
-                    closeFuture.complete(null);
-                } else {
-                    closeFuture.completeExceptionally(cause);
-                }
+                // Close the channel directly, without waiting for the channel to close properly.
+                channel.close();
             }
 
-            connectionMetricGroup.close();
+            // TODO all return completeExceptionally will let some test cases blocked, so we
+            // need to find why the test cases are blocked and remove the if statement.
+            if (cause instanceof ClosedChannelException
+                    || cause.getCause() instanceof ConnectException) {
+                // the ClosedChannelException and ConnectException is expected.
+                closeFuture.complete(null);
+            } else {
+                closeFuture.completeExceptionally(cause);
+            }
+
+            connectionMetrics.close();
         }
 
         closeQuietly(authenticator);
@@ -235,7 +220,7 @@ final class ServerConnection {
         public void onRequestResult(int requestId, ApiMessage response) {
             InflightRequest request = inflightRequests.remove(requestId);
             if (request != null && !request.responseFuture.isDone()) {
-                connectionMetricGroup.updateMetricsAfterGetResponse(
+                connectionMetrics.updateMetricsAfterGetResponse(
                         ApiKeys.forId(request.apiKey),
                         request.requestStartTime,
                         response.totalSize());
@@ -247,7 +232,7 @@ final class ServerConnection {
         public void onRequestFailure(int requestId, Throwable cause) {
             InflightRequest request = inflightRequests.remove(requestId);
             if (request != null && !request.responseFuture.isDone()) {
-                connectionMetricGroup.updateMetricsAfterGetResponse(
+                connectionMetrics.updateMetricsAfterGetResponse(
                         ApiKeys.forId(request.apiKey), request.requestStartTime, 0);
                 request.responseFuture.completeExceptionally(cause);
             }
@@ -344,14 +329,14 @@ final class ServerConnection {
                 return responseFuture;
             }
 
-            connectionMetricGroup.updateMetricsBeforeSendRequest(apiKey, rawRequest.totalSize());
+            connectionMetrics.updateMetricsBeforeSendRequest(apiKey, rawRequest.totalSize());
 
             channel.writeAndFlush(byteBuf)
                     .addListener(
                             (ChannelFutureListener)
                                     future -> {
                                         if (!future.isSuccess()) {
-                                            connectionMetricGroup.updateMetricsAfterGetResponse(
+                                            connectionMetrics.updateMetricsAfterGetResponse(
                                                     apiKey, inflight.requestStartTime, 0);
                                             Throwable cause = future.cause();
                                             if (cause instanceof IOException) {
@@ -464,8 +449,10 @@ final class ServerConnection {
     }
 
     private void switchState(ConnectionState targetState) {
-        LOG.debug("switch state form {} to {}", state, targetState);
-        state = targetState;
+        if (state != ConnectionState.DISCONNECTED) {
+            LOG.debug("switch state form {} to {}", state, targetState);
+            state = targetState;
+        }
         if (targetState == ConnectionState.READY) {
             // process pending requests
             PendingRequest pending;
@@ -491,7 +478,8 @@ final class ServerConnection {
      * <li>READY: connection is ready to send requests.
      * <li>DISCONNECTED: connection is failed to establish.
      */
-    private enum ConnectionState {
+    @VisibleForTesting
+    enum ConnectionState {
         CONNECTING,
         CHECKING_API_VERSIONS,
         AUTHENTICATING,
@@ -564,5 +552,10 @@ final class ServerConnection {
         public String ipAddress() {
             return ((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress();
         }
+    }
+
+    @VisibleForTesting
+    ConnectionState getConnectionState() {
+        return state;
     }
 }

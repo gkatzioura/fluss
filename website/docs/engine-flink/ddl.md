@@ -220,6 +220,35 @@ DROP TABLE my_table;
 
 This will entirely remove all the data of the table in the Fluss cluster.
 
+## Alter Table
+### SET properties
+The SET statement allows users to configure one or more connector options including the [Storage Options](engine-flink/options.md#storage-options) for a specified table. If a particular option is already configured on the table, it will be overridden with the new value.
+
+When using SET to modify [Storage Options](engine-flink/options.md#storage-options), the Fluss cluster will dynamically apply the changes to the table. This can be useful for modifying table behavior without needing to recreate the table.
+
+**Supported Options to modify**
+- All [Read Options](engine-flink/options.md#read-options), [Write Options](engine-flink/options.md#write-options), [Lookup Options](engine-flink/options.md#lookup-options) and [Other Options](engine-flink/options.md#other-options) except `bootstrap.servers`.
+- The following [Storage Options](engine-flink/options.md#storage-options):
+  - `table.datalake.enabled`: Enable or disable lakehouse storage for the table.
+
+```sql title="Flink SQL"
+ALTER TABLE my_table SET ('table.datalake.enabled' = 'true');
+```
+
+**Limits**
+- If lakehouse storage (`table.datalake.enabled`) is already enabled for a table, options with lakehouse format prefixes (e.g., `paimon.*`) cannot be modified again.
+
+
+### RESET properties
+Reset one or more connector option including the [Storage Options](engine-flink/options.md#storage-options) to its default value.
+
+The following example illustrates reset the `table.datalake.enabled` option to its default value `false` on the table.
+
+```sql title="Flink SQL"
+ALTER TABLE my_table RESET ('table.datalake.enabled');
+```
+
+
 ## Add Partition
 
 Fluss supports manually adding partitions to an existing partitioned table through the Fluss Catalog. If the specified partition 
@@ -273,3 +302,106 @@ ALTER TABLE my_multi_fields_part_log_table DROP PARTITION (dt = '2025-03-05', na
 ```
 
 For more details, refer to the [Flink ALTER TABLE(DROP)](https://nightlies.apache.org/flink/flink-docs-release-1.20/docs/dev/table/sql/alter/#drop) documentation.
+
+## Materialized Table
+### Overview
+Flink Materialized Table is a new table type introduced in Flink SQL that simplifies the development of both batch and streaming data pipelines.
+By defining the data freshness and query during creation, Flink automatically derives the table schema and generates a refresh pipeline to maintain the desired freshness level. This provides a unified and consistent development experience for both real-time and batch workloads. For more information, see the [Flink Materialized Table](https://nightlies.apache.org/flink/flink-docs-release-1.20/docs/dev/table/materialized-table/overview) documentation.
+
+Starting from Fluss version 0.8, Flink Materialized Table is now supported, which can significantly reduce the cost of building real-time data pipelines with Apache Flink and Fluss. Materialized tables in Fluss are implemented as regular Fluss tables with special metadata to identify them as materialized tables.
+
+### Create Materialized Table
+
+Materialized tables are created using the `CREATE MATERIALIZED TABLE` statement with a freshness interval and a query definition:
+
+```sql title="Flink SQL"
+CREATE MATERIALIZED TABLE shop_summary
+FRESHNESS = INTERVAL '5' SECOND
+AS SELECT 
+  DATE_FORMAT(order_time, 'yyyy-MM-dd') AS order_date,
+  shop_id,
+  COUNT(*) AS order_count,
+  SUM(amount) AS total_amount
+FROM orders
+GROUP BY DATE_FORMAT(order_time, 'yyyy-MM-dd'), shop_id;
+```
+
+#### Supported Refresh Modes
+
+Apache Fluss currently supports **CONTINUOUS** refresh mode for materialized table, which means the materialized table is continuously refreshed. The **FULL** refresh mode will be supported in future releases.
+
+#### Schema Definition
+
+The schema of a materialized table is automatically inferred from the query definition. You cannot manually specify column names and types - they are derived from the SELECT statement.
+
+```sql title="Flink SQL"
+-- The schema will be automatically inferred as:
+-- order_date: STRING
+-- shop_id: BIGINT  
+-- order_count: BIGINT
+-- total_amount: BIGINT
+CREATE MATERIALIZED TABLE daily_sales
+FRESHNESS = INTERVAL '1' MINUTE
+AS SELECT 
+  DATE_FORMAT(created_at, 'yyyy-MM-dd') AS order_date,
+  shop_id,
+  COUNT(*) AS order_count,
+  SUM(amount) AS total_amount
+FROM sales_events
+GROUP BY DATE_FORMAT(created_at, 'yyyy-MM-dd'), shop_id;
+```
+
+### Alter Materialized Table
+
+You can suspend and resume materialized tables to control their refresh behavior:
+
+#### Suspend Materialized Table
+
+```sql title="Flink SQL"
+ALTER MATERIALIZED TABLE shop_summary SUSPEND;
+```
+
+This stops the automatic refresh of the materialized table and saves the current state.
+
+#### Resume Materialized Table
+
+```sql title="Flink SQL"
+ALTER MATERIALIZED TABLE shop_summary RESUME;
+```
+
+This resumes the automatic refresh of the materialized table from the last saved state.
+
+### Drop Materialized Table
+
+To delete a materialized table:
+
+```sql title="Flink SQL"
+DROP MATERIALIZED TABLE shop_summary;
+```
+
+This will drop the materialized table and stop the background refresh job.
+
+### Materialized Table Options
+
+Materialized tables support the same table options as regular Fluss tables, including partitioning and bucketing:
+
+```sql title="Flink SQL"
+CREATE MATERIALIZED TABLE partitioned_summary
+FRESHNESS = INTERVAL '10' SECOND
+AS SELECT 
+  dt,
+  shop_id,
+  COUNT(*) AS order_count
+FROM orders
+GROUP BY dt, shop_id
+PARTITIONED BY (dt)
+WITH (
+  'bucket.num' = '4'
+);
+```
+
+### Limitations
+
+- Only continuous refresh mode is supported
+- Schema is automatically derived from the query
+- Materialized tables are stored as regular Fluss tables with special metadata
