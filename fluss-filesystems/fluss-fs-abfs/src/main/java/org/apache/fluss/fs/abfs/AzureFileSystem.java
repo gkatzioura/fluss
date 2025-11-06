@@ -17,6 +17,7 @@
 
 package org.apache.fluss.fs.abfs;
 
+import org.apache.fluss.fs.abfs.token.AzureDelegationTokenProvider;
 import org.apache.fluss.fs.hdfs.HadoopFileSystem;
 import org.apache.fluss.fs.token.ObtainedSecurityToken;
 
@@ -28,6 +29,8 @@ public class AzureFileSystem extends HadoopFileSystem {
 
     private final String scheme;
     private final Configuration conf;
+
+    private AzureDelegationTokenProvider delegationTokenProvider;
 
     /**
      * Wraps the given Hadoop File System object as a Flink File System object. The given Hadoop
@@ -44,6 +47,14 @@ public class AzureFileSystem extends HadoopFileSystem {
 
     @Override
     public ObtainedSecurityToken obtainSecurityToken() throws IOException {
-        throw new UnsupportedOperationException("Not impl.");
+        if (delegationTokenProvider == null) {
+            synchronized (this) {
+                if (delegationTokenProvider == null) {
+                    delegationTokenProvider = new AzureDelegationTokenProvider(scheme, conf);
+                }
+            }
+        }
+
+        return delegationTokenProvider.obtainSecurityToken();
     }
 }
