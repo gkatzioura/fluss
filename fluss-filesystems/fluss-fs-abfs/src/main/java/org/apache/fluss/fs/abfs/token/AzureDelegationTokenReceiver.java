@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
+/** Security token receiver for the abfs filesystem. */
 public class AzureDelegationTokenReceiver implements SecurityTokenReceiver {
     public static final String PROVIDER_CONFIG_NAME = "fs.azure.account.oauth.provider.type";
 
