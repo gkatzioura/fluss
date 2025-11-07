@@ -19,6 +19,7 @@ package org.apache.fluss.fs.abfs.token;
 
 import org.apache.fluss.fs.token.CredentialsJsonSerde;
 import org.apache.fluss.fs.token.ObtainedSecurityToken;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.azurebfs.oauth2.AzureADAuthenticator;
 import org.apache.hadoop.fs.azurebfs.oauth2.AzureADToken;
@@ -66,14 +67,19 @@ public class AzureDelegationTokenProvider {
         LOG.info("Obtaining session credentials token with access key: {}", clientId);
 
         try {
-            AzureADToken azureADToken = AzureADAuthenticator.getTokenUsingClientCreds(this.authEndpoint, this.clientId, this.clientSecret);
+            AzureADToken azureADToken =
+                    AzureADAuthenticator.getTokenUsingClientCreds(
+                            this.authEndpoint, this.clientId, this.clientSecret);
 
             LOG.info(
                     "Session credentials obtained successfully with expiration: {}",
                     azureADToken.getExpiry());
 
             return new ObtainedSecurityToken(
-                    scheme, toJson(azureADToken), azureADToken.getExpiry().getTime(), additionInfos);
+                    scheme,
+                    toJson(azureADToken),
+                    azureADToken.getExpiry().getTime(),
+                    additionInfos);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

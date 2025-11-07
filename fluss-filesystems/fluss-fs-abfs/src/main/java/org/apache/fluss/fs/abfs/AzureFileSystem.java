@@ -27,9 +27,9 @@ import org.apache.hadoop.conf.Configuration;
 import java.io.IOException;
 
 /**
- * Implementation of the Fluss {@link FileSystem} interface for Azure Blob Storage. This class implements the common
- * behavior implemented directly by Fluss and delegates common calls to an implementation of
- * Hadoop's filesystem abstraction.
+ * Implementation of the Fluss {@link FileSystem} interface for Azure Blob Storage. This class
+ * implements the common behavior implemented directly by Fluss and delegates common calls to an
+ * implementation of Hadoop's filesystem abstraction.
  */
 public class AzureFileSystem extends HadoopFileSystem {
 
