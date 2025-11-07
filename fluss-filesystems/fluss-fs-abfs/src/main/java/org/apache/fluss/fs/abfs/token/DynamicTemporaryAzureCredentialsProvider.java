@@ -18,6 +18,7 @@
 package org.apache.fluss.fs.abfs.token;
 
 import org.apache.fluss.fs.token.Credentials;
+
 import org.apache.hadoop.fs.azurebfs.contracts.exceptions.TokenAccessProviderException;
 import org.apache.hadoop.fs.azurebfs.oauth2.AccessTokenProvider;
 import org.apache.hadoop.fs.azurebfs.oauth2.AzureADToken;
@@ -27,10 +28,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- * Support dynamic token for authenticating with Azure. Please note that users may
- * reference this class name from configuration property fs.azure.account.oauth.provider.type. Therefore,
- * changing the class name would be a backward-incompatible change. This credential provider must
- * not fail in creation because that will break a chain of credential providers.
+ * Support dynamic token for authenticating with Azure. Please note that users may reference this
+ * class name from configuration property fs.azure.account.oauth.provider.type. Therefore, changing
+ * the class name would be a backward-incompatible change. This credential provider must not fail in
+ * creation because that will break a chain of credential providers.
  */
 public class DynamicTemporaryAzureCredentialsProvider extends AccessTokenProvider {
 
