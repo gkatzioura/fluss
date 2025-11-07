@@ -55,7 +55,6 @@ public class AzureDelegationTokenProvider {
         this.authEndpoint = conf.get(ENDPOINT_KEY);
         this.additionInfos = new HashMap<>();
 
-
         for (String key : Arrays.asList(ENDPOINT_KEY)) {
             if (conf.get(key) != null) {
                 additionInfos.put(key, conf.get(key));

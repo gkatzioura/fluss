@@ -58,7 +58,6 @@ public class DynamicTemporaryAzureCredentialsProvider extends AccessTokenProvide
         }
         LOG.debug("Providing session credentials");
 
-
         AzureADToken azureADToken = new AzureADToken();
         azureADToken.setAccessToken(credentials.getSecurityToken());
         return azureADToken;

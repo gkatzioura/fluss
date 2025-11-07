@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URI;
 
+/** Simple factory for the Azure File System. */
 public class AzureFileSystemPlugin implements FileSystemPlugin {
 
     private static final Logger LOG = LoggerFactory.getLogger(AzureFileSystemPlugin.class);
