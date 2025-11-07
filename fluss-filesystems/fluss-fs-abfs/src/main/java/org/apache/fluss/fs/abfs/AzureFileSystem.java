@@ -17,6 +17,7 @@
 
 package org.apache.fluss.fs.abfs;
 
+import org.apache.fluss.fs.FileSystem;
 import org.apache.fluss.fs.abfs.token.AzureDelegationTokenProvider;
 import org.apache.fluss.fs.hdfs.HadoopFileSystem;
 import org.apache.fluss.fs.token.ObtainedSecurityToken;
@@ -25,6 +26,11 @@ import org.apache.hadoop.conf.Configuration;
 
 import java.io.IOException;
 
+/**
+ * Implementation of the Fluss {@link FileSystem} interface for Azure Blob Storage. This class implements the common
+ * behavior implemented directly by Fluss and delegates common calls to an implementation of
+ * Hadoop's filesystem abstraction.
+ */
 public class AzureFileSystem extends HadoopFileSystem {
 
     private final String scheme;
