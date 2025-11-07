@@ -26,6 +26,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+/**
+ * Support dynamic token for authenticating with Azure. Please note that users may
+ * reference this class name from configuration property fs.azure.account.oauth.provider.type. Therefore,
+ * changing the class name would be a backward-incompatible change. This credential provider must
+ * not fail in creation because that will break a chain of credential providers.
+ */
 public class DynamicTemporaryAzureCredentialsProvider extends AccessTokenProvider {
 
     public static final String NAME = DynamicTemporaryAzureCredentialsProvider.class.getName();

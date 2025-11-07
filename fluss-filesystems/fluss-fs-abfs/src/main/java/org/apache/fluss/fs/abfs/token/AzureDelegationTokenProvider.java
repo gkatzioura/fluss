@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/** Token provider for abfs Hadoop filesystems. */
 public class AzureDelegationTokenProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(AzureDelegationTokenProvider.class);
