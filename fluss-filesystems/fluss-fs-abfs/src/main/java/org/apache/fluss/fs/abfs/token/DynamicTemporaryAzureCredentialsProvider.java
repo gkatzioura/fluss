@@ -19,13 +19,16 @@ package org.apache.fluss.fs.abfs.token;
 
 import org.apache.fluss.fs.token.Credentials;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.azurebfs.contracts.exceptions.TokenAccessProviderException;
+import org.apache.hadoop.fs.azurebfs.extensions.CustomTokenProviderAdaptee;
 import org.apache.hadoop.fs.azurebfs.oauth2.AccessTokenProvider;
 import org.apache.hadoop.fs.azurebfs.oauth2.AzureADToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * Support dynamic token for authenticating with Azure. Please note that users may reference this
@@ -33,7 +36,8 @@ import java.io.IOException;
  * the class name would be a backward-incompatible change. This credential provider must not fail in
  * creation because that will break a chain of credential providers.
  */
-public class DynamicTemporaryAzureCredentialsProvider extends AccessTokenProvider {
+public class DynamicTemporaryAzureCredentialsProvider extends AccessTokenProvider
+        implements CustomTokenProviderAdaptee {
 
     public static final String NAME = DynamicTemporaryAzureCredentialsProvider.class.getName();
 
@@ -41,6 +45,23 @@ public class DynamicTemporaryAzureCredentialsProvider extends AccessTokenProvide
 
     private static final Logger LOG =
             LoggerFactory.getLogger(DynamicTemporaryAzureCredentialsProvider.class);
+
+    @Override
+    public void initialize(Configuration configuration, String s) throws IOException {}
+
+    @Override
+    public String getAccessToken() throws IOException {
+        return getToken().getAccessToken();
+    }
+
+    @Override
+    public Date getExpiryTime() {
+        try {
+            return getToken().getExpiry();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     protected AzureADToken refreshToken() throws IOException {
