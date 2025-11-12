@@ -70,7 +70,7 @@ public class AzureDelegationTokenReceiver implements SecurityTokenReceiver {
 
     @Override
     public String scheme() {
-        return "s3";
+        return "abfs";
     }
 
     @Override
