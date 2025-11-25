@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/** Tests for {@link AzureDelegationTokenProvider}. */
 public class AzureDelegationTokenProviderTest {
 
     private static final String CONFIG_PREFIX = "fs.azure.account.oauth2.client";
