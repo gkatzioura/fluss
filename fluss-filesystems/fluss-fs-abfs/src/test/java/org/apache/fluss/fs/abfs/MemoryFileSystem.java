@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.apache.fluss.fs.abfs;
 
 import org.apache.hadoop.conf.Configuration;
@@ -79,21 +96,23 @@ public class MemoryFileSystem extends FileSystem {
                     public int read() {
                         return pos < data.length ? (data[pos++] & 0xff) : -1;
                     }
-                }
-        );
+                });
     }
 
     @Override
     public FSDataOutputStream create(Path f, boolean overwrite) throws IOException {
-        return create(f, overwrite,
-                -1, (short) -1,
-                -1, null);
+        return create(f, overwrite, -1, (short) -1, -1, null);
     }
 
     @Override
-    public FSDataOutputStream create(Path f, boolean overwrite,
-                                     int bufferSize, short replication,
-                                     long blockSize, Progressable progress) throws IOException {
+    public FSDataOutputStream create(
+            Path f,
+            boolean overwrite,
+            int bufferSize,
+            short replication,
+            long blockSize,
+            Progressable progress)
+            throws IOException {
         f = makeAbsolute(f);
 
         if (!overwrite && files.containsKey(f)) {
@@ -105,24 +124,33 @@ public class MemoryFileSystem extends FileSystem {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         final Path toRet = f;
-        return new FSDataOutputStream(new FilterOutputStream(baos) {
-            @Override
-            public void close() throws IOException {
-                super.close();
-                files.put(toRet, baos.toByteArray());
-            }
-        }, null);
+        return new FSDataOutputStream(
+                new FilterOutputStream(baos) {
+                    @Override
+                    public void close() throws IOException {
+                        super.close();
+                        files.put(toRet, baos.toByteArray());
+                    }
+                },
+                null);
     }
 
     @Override
-    public FSDataOutputStream create(Path path, FsPermission fsPermission, boolean b, int i, short i1, long l, Progressable progressable) throws IOException {
-        return create(path, b,
-                i, i1,
-                l, progressable);
+    public FSDataOutputStream create(
+            Path path,
+            FsPermission fsPermission,
+            boolean b,
+            int i,
+            short i1,
+            long l,
+            Progressable progressable)
+            throws IOException {
+        return create(path, b, i, i1, l, progressable);
     }
 
     @Override
-    public FSDataOutputStream append(Path path, int i, Progressable progressable) throws IOException {
+    public FSDataOutputStream append(Path path, int i, Progressable progressable)
+            throws IOException {
         return null;
     }
 
@@ -136,7 +164,9 @@ public class MemoryFileSystem extends FileSystem {
         if (files.remove(f) != null) return true;
 
         if (!recursive) {
-            boolean hasChildren = files.keySet().stream().anyMatch(p -> p.getParent().toString().startsWith(f.toString()));
+            boolean hasChildren =
+                    files.keySet().stream()
+                            .anyMatch(p -> p.getParent().toString().startsWith(f.toString()));
             if (hasChildren) throw new IOException();
         }
 
@@ -150,9 +180,7 @@ public class MemoryFileSystem extends FileSystem {
         f = makeAbsolute(f);
 
         if (files.containsKey(f)) {
-            return new FileStatus[]{
-                    new FileStatus(files.get(f).length, false, 1, 1, 0, f)
-            };
+            return new FileStatus[] {new FileStatus(files.get(f).length, false, 1, 1, 0, f)};
         }
 
         if (directories.contains(f)) {
@@ -161,8 +189,7 @@ public class MemoryFileSystem extends FileSystem {
             // Files
             for (Path p : files.keySet()) {
                 if (p.getParent().equals(f)) {
-                    statusList.add(new FileStatus(files.get(p).length,
-                            false, 1, 1, 0, p));
+                    statusList.add(new FileStatus(files.get(p).length, false, 1, 1, 0, p));
                 }
             }
 
@@ -180,9 +207,7 @@ public class MemoryFileSystem extends FileSystem {
     }
 
     @Override
-    public void setWorkingDirectory(Path path) {
-
-    }
+    public void setWorkingDirectory(Path path) {}
 
     @Override
     public Path getWorkingDirectory() {
@@ -194,13 +219,12 @@ public class MemoryFileSystem extends FileSystem {
         f = makeAbsolute(f);
 
         Path parent = f;
-        while (parent!=null&&!parent.equals(workingDir)) {
-            if(files.containsKey(parent)) {
+        while (parent != null && !parent.equals(workingDir)) {
+            if (files.containsKey(parent)) {
                 throw new IOException();
             }
             parent = parent.getParent();
         }
-
 
         directories.add(f);
         return true;
