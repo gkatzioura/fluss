@@ -54,7 +54,7 @@ See bundled license files for details.
 This project bundles the following dependencies under BSD-2 License (https://opensource.org/licenses/BSD-2-Clause).
 See bundled license files for details.
 
-- dnsjava:dnsjava:2.1.7
+- dnsjava:dnsjava:3.4.0
 
 This project bundles the following dependencies under EDL 1.0 License (https://www.eclipse.org/org/documents/edl-v10.php).
 See bundled license files for details.
@@ -74,15 +74,20 @@ See bundled license files for details.
 - javax.xml.bind:jaxb-api:2.3.1
 - javax.xml.stream:stax-api:1.0-2
 
-org.bouncycastle:bcprov-jdk15on:1.70
+This project bundles the following dependencies under the BouncyCastle license (https://www.bouncycastle.org/licence.html).
+See bundled license files for details.
+- org.bouncycastle:bcprov-jdk15on:1.70
 
-mit
-org.checkerframework:checker-qual:2.5.2
-org.codehaus.mojo:animal-sniffer-annotations:1.17
+This project bundles the following dependencies under the MIT license (https://opensource.org/license/mit).
+See bundled license files for details.
+- org.checkerframework:checker-qual:2.5.2
+- org.codehaus.mojo:animal-sniffer-annotations:1.17
 
-bsd
-org.codehaus.woodstox:stax2-api:4.2.1
+This project bundles the following dependencies under the 2-Clause BSD license (https://opensource.org/license/bsd-2-clause).
+See bundled license files for details.
+- org.codehaus.woodstox:stax2-api:4.2.1
 
-Epl apache
-org.eclipse.jetty:jetty-util-ajax:9.4.53.v20231009
-	org.eclipse.jetty:jetty-util:9.4.53.v20231009
+This project bundles the following dependencies under the EPL license,Apache Software License 2.0  (https://www.eclipse.org/legal/epl-2.0/, http://www.apache.org/licenses/LICENSE-2.0.txt).
+See bundled license files for details.
+- org.eclipse.jetty:jetty-util-ajax:9.4.53.v20231009
+- org.eclipse.jetty:jetty-util:9.4.53.v20231009
