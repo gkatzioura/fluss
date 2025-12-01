@@ -17,34 +17,18 @@
 
 package org.apache.fluss.fs.abfs;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.fluss.config.Configuration;
 import org.apache.fluss.fs.FileSystem;
 import org.apache.fluss.fs.FileSystemBehaviorTestSuite;
 import org.apache.fluss.fs.FsPath;
-import org.apache.fluss.fs.abfs.AzureFileSystemPlugin;
 import org.apache.fluss.fs.abfs.token.MockAuthServer;
-import org.apache.fluss.testutils.common.CommonTestUtils;
-import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.FSDataOutputStreamBuilder;
-import org.apache.hadoop.fs.LocalFileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.azurebfs.AzureBlobFileSystem;
-import org.apache.hadoop.fs.azurebfs.AzureBlobFileSystemStore;
+
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.URI;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /** Tests that validate the behavior of the Google Cloud Storage File System Plugin. */
 class AbfsFileSystemBehaviorITCase extends FileSystemBehaviorTestSuite {
@@ -66,8 +50,7 @@ class AbfsFileSystemBehaviorITCase extends FileSystemBehaviorTestSuite {
         fileSystem = createFileSystem();
     }
 
-    void testPathAndScheme() throws Exception {
-    }
+    void testPathAndScheme() throws Exception {}
 
     @Override
     protected FileSystem getFileSystem() {
@@ -88,7 +71,8 @@ class AbfsFileSystemBehaviorITCase extends FileSystemBehaviorTestSuite {
         configuration.setString(CONFIG_PREFIX + ".key", AZURE_ACCOUNT_KEY);
 
         FileSystem fileSystem =
-                abfsFileSystemPlugin.create(URI.create("abfs://flus@test.dfs.core.windows.net/test"), configuration);
+                abfsFileSystemPlugin.create(
+                        URI.create("abfs://flus@test.dfs.core.windows.net/test"), configuration);
 
         applyMockStorage(fileSystem);
 
@@ -98,7 +82,7 @@ class AbfsFileSystemBehaviorITCase extends FileSystemBehaviorTestSuite {
     private static void applyMockStorage(FileSystem fileSystem) throws IOException {
         try {
             MemoryFileSystem memoryFileSystem = new MemoryFileSystem(ABFS_FS_PATH);
-            FieldUtils.writeField(fileSystem,"fs",memoryFileSystem, true);
+            FieldUtils.writeField(fileSystem, "fs", memoryFileSystem, true);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
