@@ -20,7 +20,12 @@ package org.apache.fluss.fs.abfs.token;
 import org.apache.fluss.shaded.netty4.io.netty.buffer.Unpooled;
 import org.apache.fluss.shaded.netty4.io.netty.channel.ChannelHandlerContext;
 import org.apache.fluss.shaded.netty4.io.netty.channel.SimpleChannelInboundHandler;
-import org.apache.fluss.shaded.netty4.io.netty.handler.codec.http.*;
+import org.apache.fluss.shaded.netty4.io.netty.handler.codec.http.DefaultFullHttpResponse;
+import org.apache.fluss.shaded.netty4.io.netty.handler.codec.http.FullHttpResponse;
+import org.apache.fluss.shaded.netty4.io.netty.handler.codec.http.HttpMethod;
+import org.apache.fluss.shaded.netty4.io.netty.handler.codec.http.HttpObject;
+import org.apache.fluss.shaded.netty4.io.netty.handler.codec.http.HttpRequest;
+import org.apache.fluss.shaded.netty4.io.netty.handler.codec.http.HttpResponseStatus;
 import org.apache.fluss.shaded.netty4.io.netty.util.AsciiString;
 import org.apache.fluss.utils.IOUtils;
 

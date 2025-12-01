@@ -30,7 +30,6 @@ import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 /** Tests for {@link DynamicTemporaryAzureCredentialsProvider}. */
 class DynamicTemporaryAzureCredentialsProviderTest {

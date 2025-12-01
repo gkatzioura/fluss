@@ -25,7 +25,7 @@ import java.util.HashMap;
 
 import static org.apache.fluss.fs.abfs.token.AzureDelegationTokenReceiver.PROVIDER_CONFIG_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /** Tests for {@link AzureDelegationTokenReceiver}. */
 class AzureDelegationTokenReceiverTest {
@@ -49,9 +49,9 @@ class AzureDelegationTokenReceiverTest {
         org.apache.hadoop.conf.Configuration hadoopConfiguration =
                 new org.apache.hadoop.conf.Configuration();
         hadoopConfiguration.set(PROVIDER_CONFIG_NAME, "");
-        assertThrows(
-                IllegalStateException.class,
-                () -> AzureDelegationTokenReceiver.updateHadoopConfig(hadoopConfiguration));
+        assertThatThrownBy(
+                        () -> AzureDelegationTokenReceiver.updateHadoopConfig(hadoopConfiguration))
+                .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
