@@ -26,7 +26,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /** Tests for {@link AzureDelegationTokenProvider}. */
 public class AzureDelegationTokenProviderTest {
@@ -56,7 +56,7 @@ public class AzureDelegationTokenProviderTest {
                 azureDelegationTokenProvider.obtainSecurityToken();
         byte[] token = obtainedSecurityToken.getToken();
         Credentials credentials = CredentialsJsonSerde.fromJson(token);
-        assertEquals(credentials.getSecurityToken(), "token");
+        assertThat(credentials.getSecurityToken()).isEqualTo("token");
     }
 
     @AfterAll

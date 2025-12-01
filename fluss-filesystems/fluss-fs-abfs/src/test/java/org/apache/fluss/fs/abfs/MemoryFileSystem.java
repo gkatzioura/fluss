@@ -17,19 +17,33 @@
 
 package org.apache.fluss.fs.abfs;
 
-import org.apache.hadoop.fs.*;
+import org.apache.fluss.utils.MapUtils;
+
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FSInputStream;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.util.Progressable;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FilterOutputStream;
+import java.io.IOException;
 import java.net.URI;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+/** Util file system abstraction. */
 public class MemoryFileSystem extends FileSystem {
 
-    private final Map<Path, byte[]> files = new ConcurrentHashMap<>();
-    private final Set<Path> directories = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final Map<Path, byte[]> files = MapUtils.newConcurrentHashMap();
+    private final Set<Path> directories =
+            Collections.newSetFromMap(MapUtils.newConcurrentHashMap());
 
     @Override
     public boolean exists(Path f) throws IOException {
@@ -49,7 +63,11 @@ public class MemoryFileSystem extends FileSystem {
     @Override
     public FSDataInputStream open(Path f, int bufferSize) throws IOException {
         byte[] data = files.get(f);
-        if (data == null) throw new IOException(f.toString());
+
+        if (data == null) {
+            throw new IOException(f.toString());
+        }
+
         return new FSDataInputStream(
                 new FSInputStream() {
                     private int pos = 0;
@@ -137,13 +155,17 @@ public class MemoryFileSystem extends FileSystem {
 
     @Override
     public boolean delete(Path f, boolean recursive) throws IOException {
-        if (files.remove(f) != null) return true;
+        if (files.remove(f) != null) {
+            return true;
+        }
 
         if (!recursive) {
             boolean hasChildren =
                     files.keySet().stream()
                             .anyMatch(p -> p.getParent().toString().startsWith(f.toString()));
-            if (hasChildren) throw new IOException();
+            if (hasChildren) {
+                throw new IOException();
+            }
         }
 
         directories.removeIf(d -> d.toString().startsWith(f.toString()));
