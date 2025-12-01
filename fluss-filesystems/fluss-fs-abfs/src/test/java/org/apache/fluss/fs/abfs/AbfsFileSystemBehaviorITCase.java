@@ -81,7 +81,7 @@ class AbfsFileSystemBehaviorITCase extends FileSystemBehaviorTestSuite {
 
     private static void applyMockStorage(FileSystem fileSystem) throws IOException {
         try {
-            MemoryFileSystem memoryFileSystem = new MemoryFileSystem(ABFS_FS_PATH);
+            MemoryFileSystem memoryFileSystem = new MemoryFileSystem();
             FieldUtils.writeField(fileSystem, "fs", memoryFileSystem, true);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
