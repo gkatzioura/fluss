@@ -30,9 +30,9 @@ import java.io.IOException;
 import java.net.URI;
 
 /** Simple factory for the Azure File System. */
-public class AzureFileSystemPlugin implements FileSystemPlugin {
+public class AbfsFileSystemPlugin implements FileSystemPlugin {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AzureFileSystemPlugin.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbfsFileSystemPlugin.class);
 
     private static final String[] FLUSS_CONFIG_PREFIXES = {"azure.", "fs.azure.", "fs.wasb."};
 
