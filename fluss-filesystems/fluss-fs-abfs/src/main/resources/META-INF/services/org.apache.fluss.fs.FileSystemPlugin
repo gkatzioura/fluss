@@ -14,4 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-org.apache.fluss.fs.abfs.AzureFileSystemPlugin
+org.apache.fluss.fs.abfs.AbfsFileSystemPlugin
+org.apache.fluss.fs.abfs.AbfssFileSystemPlugin
+org.apache.fluss.fs.abfs.WasbFileSystemPlugin
+org.apache.fluss.fs.abfs.WasbsFileSystemPlugin

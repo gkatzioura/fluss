@@ -63,7 +63,7 @@ class AbfsFileSystemBehaviorITCase extends FileSystemBehaviorTestSuite {
     }
 
     private static FileSystem createFileSystem() throws IOException {
-        AzureFileSystemPlugin abfsFileSystemPlugin = new AzureFileSystemPlugin();
+        AbfsFileSystemPlugin abfsFileSystemPlugin = new AbfsFileSystemPlugin();
         Configuration configuration = new Configuration();
         configuration.setString(CONFIG_PREFIX + ".oauth2.id", CLIENT_ID);
         configuration.setString(CONFIG_PREFIX + ".oauth2.secret", CLIENT_SECRET);
