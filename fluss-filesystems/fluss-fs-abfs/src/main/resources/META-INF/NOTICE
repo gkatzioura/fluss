@@ -53,22 +53,15 @@ See bundled license files for details.
 
 This project bundles the following dependencies under BSD-2 License (https://opensource.org/licenses/BSD-2-Clause).
 See bundled license files for details.
-
 - dnsjava:dnsjava:3.4.0
 
 This project bundles the following dependencies under EDL 1.0 License (https://www.eclipse.org/org/documents/edl-v10.php).
 See bundled license files for details.
-
 - com.sun.xml.bind:jaxb-impl:2.2.3-1
 - jakarta.activation:jakarta.activation-api:1.2.1
 
-This project bundles the following dependencies under CDDL 1.1 GPL 1.1 License (https://spdx.org/licenses/CDDL-1.1.html,https://www.gnu.org/licenses/old-licenses/gpl-1.0.en.html).
-See bundled license files for details.
-- com.github.pjfanning:jersey-json:1.20
-
 This project bundles the following dependencies under the CDDL 1.1 license.
 See bundled license files for details.
-
 - javax.activation:activation:1.1
 - javax.xml.bind:jaxb-api:2.2.2
 - javax.xml.bind:jaxb-api:2.3.1
