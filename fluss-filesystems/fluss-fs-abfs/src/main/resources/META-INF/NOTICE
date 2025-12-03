@@ -63,8 +63,9 @@ See bundled license files for details.
 This project bundles the following dependencies under the CDDL 1.1 license.
 See bundled license files for details.
 - javax.activation:activation:1.1
-- javax.xml.bind:jaxb-api:2.3.1
+- javax.xml.bind:jaxb-api:2.2.2
 - javax.xml.stream:stax-api:1.0-2
+- com.github.pjfanning:jersey-json:1.20
 
 This project bundles the following dependencies under the BouncyCastle license (https://www.bouncycastle.org/licence.html).
 See bundled license files for details.
