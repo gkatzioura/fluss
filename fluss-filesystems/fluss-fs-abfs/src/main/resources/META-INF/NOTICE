@@ -62,6 +62,7 @@ This project bundles the following dependencies under dual license CDDL 1.1 / GP
 - CDDL 1.1: https://oss.oracle.com/licenses/CDDL-1.1
 - GPLv2 + CPE: https://openjdk.org/legal/gplv2+ce.html
 
+- javax.xml.bind:jaxb-api:2.2.2
 - javax.xml.bind:jaxb-api:2.3.1
 - javax.activation:activation:1.1
 - com.sun.xml.bind:jaxb-impl:2.2.3-1
