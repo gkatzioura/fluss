@@ -43,6 +43,8 @@ public class DynamicTemporaryAzureCredentialsProvider extends AccessTokenProvide
 
     public static final String COMPONENT = "Dynamic session credentials for Fluss";
 
+    private volatile AzureADToken azureADToken;
+
     private static final Logger LOG =
             LoggerFactory.getLogger(DynamicTemporaryAzureCredentialsProvider.class);
 
@@ -66,18 +68,11 @@ public class DynamicTemporaryAzureCredentialsProvider extends AccessTokenProvide
     @Override
     protected AzureADToken refreshToken() throws IOException {
         Credentials credentials = AzureDelegationTokenReceiver.getCredentials();
-        AzureADToken azureADToken = new AzureADToken();
-        azureADToken.setAccessToken(credentials.getSecurityToken());
-        return azureADToken;
-    }
-
-    @Override
-    public synchronized AzureADToken getToken() throws IOException {
-        Credentials credentials = AzureDelegationTokenReceiver.getCredentials();
 
         if (credentials == null) {
             throw new TokenAccessProviderException(COMPONENT);
         }
+
         LOG.debug("Providing session credentials");
 
         AzureADToken azureADToken = new AzureADToken();
