@@ -24,8 +24,6 @@ import org.apache.fluss.fs.token.ObtainedSecurityToken;
 
 import org.apache.hadoop.conf.Configuration;
 
-import java.io.IOException;
-
 // TODO: implement obtainSecurityToken to enable clients access the Google File System
 //  through the FileSystem security token receiver API.
 /**
