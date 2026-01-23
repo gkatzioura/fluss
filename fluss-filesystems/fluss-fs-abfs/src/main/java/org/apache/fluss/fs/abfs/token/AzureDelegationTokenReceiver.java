@@ -82,9 +82,7 @@ public class AzureDelegationTokenReceiver implements SecurityTokenReceiver {
         credentials = CredentialsJsonSerde.fromJson(tokenBytes);
         additionInfos = token.getAdditionInfos();
 
-        LOG.info(
-                "Session credentials updated successfully with access key: {}.",
-                credentials.getAccessKeyId());
+        LOG.debug("Session credentials updated successfully using with securityToken");
     }
 
     public static Credentials getCredentials() {
