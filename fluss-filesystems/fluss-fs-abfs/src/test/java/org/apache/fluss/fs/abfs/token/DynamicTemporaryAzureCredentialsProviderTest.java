@@ -34,8 +34,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /** Tests for {@link DynamicTemporaryAzureCredentialsProvider}. */
 class DynamicTemporaryAzureCredentialsProviderTest {
 
-    private static final String CLIENT_ID = "testClientId";
-    private static final String CLIENT_SECRET = "testClientSecret";
+    private static final String CLIENT_ID = null;
+    private static final String CLIENT_SECRET = null;
 
     private static final String SESSION_TOKEN = "sessionToken";
 
