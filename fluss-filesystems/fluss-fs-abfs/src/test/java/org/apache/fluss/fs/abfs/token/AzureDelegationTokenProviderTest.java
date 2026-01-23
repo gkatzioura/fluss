@@ -37,11 +37,11 @@ public class AzureDelegationTokenProviderTest {
 
     private static final String ENDPOINT_KEY = "http://localhost:8080";
 
-    private static MockAuthServer mockGSServer;
+    private static MockAuthServer mockAuthServer;
 
     @BeforeAll
     static void setup() {
-        mockGSServer = MockAuthServer.create();
+        mockAuthServer = MockAuthServer.create();
     }
 
     @Test
@@ -61,6 +61,6 @@ public class AzureDelegationTokenProviderTest {
 
     @AfterAll
     static void tearDown() {
-        mockGSServer.close();
+        mockAuthServer.close();
     }
 }
