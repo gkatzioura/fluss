@@ -41,11 +41,11 @@ class AbfsFileSystemBehaviorITCase extends FileSystemBehaviorTestSuite {
     private static final String ENDPOINT_KEY = "http://localhost:8080";
     public static final String ABFS_FS_PATH = "abfs://flus@test.dfs.core.windows.net/test";
 
-    private static MockAuthServer mockGSServer;
+    private static MockAuthServer mockAuthServer;
 
     @BeforeAll
     static void setup() {
-        mockGSServer = MockAuthServer.create();
+        mockAuthServer = MockAuthServer.create();
         final Configuration configuration = new Configuration();
         configuration.setString(CONFIG_PREFIX + ".oauth2.client.id", CLIENT_ID);
         configuration.setString(CONFIG_PREFIX + ".oauth2.client.secret", CLIENT_SECRET);
@@ -77,6 +77,6 @@ class AbfsFileSystemBehaviorITCase extends FileSystemBehaviorTestSuite {
 
     @AfterAll
     static void tearDown() throws IOException {
-        mockGSServer.close();
+        mockAuthServer.close();
     }
 }
