@@ -63,5 +63,6 @@ class DynamicTemporaryAzureCredentialsProviderTest {
 
         AzureADToken azureADToken = provider.getToken();
         assertThat(azureADToken.getAccessToken()).isEqualTo(credentials.getSecurityToken());
+        assertThatThrownBy(azureADToken::getExpiry).isInstanceOf(NullPointerException.class);
     }
 }
