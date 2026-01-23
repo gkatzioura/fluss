@@ -31,7 +31,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class AzureDelegationTokenReceiverTest {
 
     private static final String PROVIDER_CLASS_NAME = "TestProvider";
-    private static final String REGION = "testRegion";
 
     @BeforeEach
     void beforeEach() {

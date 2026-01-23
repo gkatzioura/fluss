@@ -56,6 +56,8 @@ public class AzureDelegationTokenProviderTest {
                 azureDelegationTokenProvider.obtainSecurityToken();
         byte[] token = obtainedSecurityToken.getToken();
         Credentials credentials = CredentialsJsonSerde.fromJson(token);
+        assertThat(credentials.getAccessKeyId()).isEqualTo("null");
+        assertThat(credentials.getSecretAccessKey()).isEqualTo("null");
         assertThat(credentials.getSecurityToken()).isEqualTo("token");
     }
 
