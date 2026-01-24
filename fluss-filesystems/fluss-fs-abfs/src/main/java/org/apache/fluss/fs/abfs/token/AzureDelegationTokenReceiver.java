@@ -58,7 +58,7 @@ public class AzureDelegationTokenReceiver implements SecurityTokenReceiver {
         // then, set addition info
         if (additionInfos == null) {
             // if addition info is null, it also means we have not received any token,
-            // we throw InvalidCredentialsException
+            // we throw IllegalStateException
             throw new IllegalStateException(DynamicTemporaryAzureCredentialsProvider.COMPONENT);
         } else {
             for (Map.Entry<String, String> entry : additionInfos.entrySet()) {
