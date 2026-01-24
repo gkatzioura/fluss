@@ -66,6 +66,7 @@ public class DynamicTemporaryAzureCredentialsProvider extends AccessTokenProvide
     @Override
     protected AzureADToken refreshToken() throws IOException {
         Credentials credentials = AzureDelegationTokenReceiver.getCredentials();
+        Long validUntil = AzureDelegationTokenReceiver.validUntil;
 
         if (credentials == null) {
             throw new TokenAccessProviderException(COMPONENT);
@@ -75,6 +76,7 @@ public class DynamicTemporaryAzureCredentialsProvider extends AccessTokenProvide
 
         AzureADToken azureADToken = new AzureADToken();
         azureADToken.setAccessToken(credentials.getSecurityToken());
+        azureADToken.setExpiry(new Date(validUntil));
         return azureADToken;
     }
 }

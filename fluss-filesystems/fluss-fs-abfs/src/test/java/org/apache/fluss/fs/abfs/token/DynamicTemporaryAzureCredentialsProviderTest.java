@@ -26,6 +26,7 @@ import org.apache.hadoop.fs.azurebfs.contracts.exceptions.TokenAccessProviderExc
 import org.apache.hadoop.fs.azurebfs.oauth2.AzureADToken;
 import org.junit.jupiter.api.Test;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,6 +64,6 @@ class DynamicTemporaryAzureCredentialsProviderTest {
 
         AzureADToken azureADToken = provider.getToken();
         assertThat(azureADToken.getAccessToken()).isEqualTo(credentials.getSecurityToken());
-        assertThatThrownBy(azureADToken::getExpiry).isInstanceOf(NullPointerException.class);
+        assertThat(azureADToken.getExpiry()).isEqualTo(new Date(1L));
     }
 }

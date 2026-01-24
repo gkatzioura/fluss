@@ -34,6 +34,7 @@ public class AzureDelegationTokenReceiver implements SecurityTokenReceiver {
     private static final Logger LOG = LoggerFactory.getLogger(AzureDelegationTokenReceiver.class);
 
     static volatile Credentials credentials;
+    static volatile Long validUntil;
     static volatile Map<String, String> additionInfos;
 
     public static void updateHadoopConfig(org.apache.hadoop.conf.Configuration hadoopConfig) {
@@ -81,6 +82,7 @@ public class AzureDelegationTokenReceiver implements SecurityTokenReceiver {
 
         credentials = CredentialsJsonSerde.fromJson(tokenBytes);
         additionInfos = token.getAdditionInfos();
+        validUntil = token.getValidUntil().orElse(null);
 
         LOG.debug("Session credentials updated successfully using with securityToken");
     }
