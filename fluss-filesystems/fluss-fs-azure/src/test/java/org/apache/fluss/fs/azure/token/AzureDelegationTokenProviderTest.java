@@ -21,6 +21,7 @@ import org.apache.fluss.config.Configuration;
 import org.apache.fluss.fs.token.Credentials;
 import org.apache.fluss.fs.token.CredentialsJsonSerde;
 import org.apache.fluss.fs.token.ObtainedSecurityToken;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

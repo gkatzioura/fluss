@@ -66,11 +66,12 @@ public class AzureFileSystemPluginTest {
         // This will try to initialize AzureBlobFileSystem which might fail in some environments
         // but we want to check if it reaches the right logic.
         // Actually, AzureBlobFileSystem.initialize might fail because it tries to parse the URI.
-        
+
         URI uri = new URI("abfs://container@account.dfs.core.windows.net/");
-        // We don't necessarily need to call create() if we can test the private methods or if they are called.
+        // We don't necessarily need to call create() if we can test the private methods or if they
+        // are called.
         // Since they are private, we call create().
-        
+
         try {
             plugin.create(uri, flussConfig);
         } catch (Exception e) {
@@ -87,7 +88,9 @@ public class AzureFileSystemPluginTest {
         Credentials credentials = new Credentials("id", "secret", "token");
         Map<String, String> additionInfos = new HashMap<>();
         additionInfos.put("some", "info");
-        ObtainedSecurityToken token = new ObtainedSecurityToken("abfs", CredentialsJsonSerde.toJson(credentials), 100L, additionInfos);
+        ObtainedSecurityToken token =
+                new ObtainedSecurityToken(
+                        "abfs", CredentialsJsonSerde.toJson(credentials), 100L, additionInfos);
         new AbfsDelegationTokenReceiver().onNewTokensObtained(token);
 
         URI uri = new URI("abfs://container@account.dfs.core.windows.net/");
@@ -100,16 +103,18 @@ public class AzureFileSystemPluginTest {
 
     @Test
     void testUnsupportedScheme() {
-        AzureFileSystemPlugin plugin = new AzureFileSystemPlugin() {
-            @Override
-            public String getScheme() {
-                return "unsupported";
-            }
-        };
-        
+        AzureFileSystemPlugin plugin =
+                new AzureFileSystemPlugin() {
+                    @Override
+                    public String getScheme() {
+                        return "unsupported";
+                    }
+                };
+
         Configuration flussConfig = new Configuration();
-        org.apache.hadoop.conf.Configuration hadoopConfig = new org.apache.hadoop.conf.Configuration();
-        
+        org.apache.hadoop.conf.Configuration hadoopConfig =
+                new org.apache.hadoop.conf.Configuration();
+
         // Accessing setCredentialProvider via reflection or by making it package-private.
         // In the code it is private. Let's see if we can trigger it via create.
         assertThatThrownBy(() -> plugin.create(new URI("unsupported://foo"), flussConfig))

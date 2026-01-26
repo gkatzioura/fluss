@@ -44,9 +44,7 @@ public class AzureFileSystem extends HadoopFileSystem {
      * @param hadoopFileSystem The Hadoop FileSystem that will be used under the hood.
      */
     public AzureFileSystem(
-            String scheme,
-            org.apache.hadoop.fs.FileSystem hadoopFileSystem,
-            Configuration conf) {
+            String scheme, org.apache.hadoop.fs.FileSystem hadoopFileSystem, Configuration conf) {
         super(hadoopFileSystem);
         this.scheme = scheme;
         this.conf = conf;
