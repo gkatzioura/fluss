@@ -26,7 +26,7 @@ package org.apache.fluss.fs.azure;
  *
  * <p>URI format: {@code abfss://<container>@<storage-account>.dfs.core.windows.net/<path>}
  */
-public class AbfssFileSystemPlugin extends AbfsFileSystemPlugin {
+public class AbfssFileSystemPlugin extends AzureFileSystemPlugin {
 
     @Override
     public String getScheme() {

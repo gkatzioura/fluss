@@ -26,7 +26,7 @@ package org.apache.fluss.fs.azure;
  *
  * <p>URI format: {@code wasb://<container>@<storage-account>.blob.core.windows.net/<path>}
  */
-public class WasbFileSystemPlugin extends AbfsFileSystemPlugin {
+public class WasbFileSystemPlugin extends AzureFileSystemPlugin {
 
     @Override
     public String getScheme() {
