@@ -27,7 +27,7 @@
         <version>0.9-SNAPSHOT</version>
     </parent>
 
-    <artifactId>fluss-fs-abfs</artifactId>
+    <artifactId>fluss-fs-azure</artifactId>
     <name>Fluss : FileSystems : Azure FS</name>
 
     <packaging>jar</packaging>
