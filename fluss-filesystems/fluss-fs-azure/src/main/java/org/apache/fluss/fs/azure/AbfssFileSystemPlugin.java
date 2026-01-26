@@ -21,8 +21,8 @@ package org.apache.fluss.fs.azure;
  * FileSystem plugin for Azure Blob Storage using the ABFS driver with SSL/TLS encryption.
  * Registered for the {@code abfss://} scheme.
  *
- * <p>This is the secure (SSL-enabled) variant of ABFS, recommended for production use
- * with Azure Data Lake Storage Gen2.
+ * <p>This is the secure (SSL-enabled) variant of ABFS, recommended for production use with Azure
+ * Data Lake Storage Gen2.
  *
  * <p>URI format: {@code abfss://<container>@<storage-account>.dfs.core.windows.net/<path>}
  */

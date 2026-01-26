@@ -39,8 +39,8 @@ import static org.apache.fluss.fs.azure.token.AzureDelegationTokenReceiver.PROVI
  * FileSystem plugin for Azure Blob Storage using the ABFS (Azure Blob File System) driver.
  * Registered for the {@code abfs://} scheme.
  *
- * <p>ABFS is the recommended driver for accessing Azure Data Lake Storage Gen2.
- * Use this scheme for non-SSL connections to ADLS Gen2 storage accounts.
+ * <p>ABFS is the recommended driver for accessing Azure Data Lake Storage Gen2. Use this scheme for
+ * non-SSL connections to ADLS Gen2 storage accounts.
  *
  * <p>URI format: {@code abfs://<container>@<storage-account>.dfs.core.windows.net/<path>}
  */
@@ -48,7 +48,7 @@ public class AbfsFileSystemPlugin implements FileSystemPlugin {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbfsFileSystemPlugin.class);
 
-    private static final String[] FLUSS_CONFIG_PREFIXES = {"azure.", "fs.azure.", "fs.wasb."};
+    private static final String[] FLUSS_CONFIG_PREFIXES = {"fs.azure."};
 
     private static final String HADOOP_CONFIG_PREFIX = "fs.azure.";
 
