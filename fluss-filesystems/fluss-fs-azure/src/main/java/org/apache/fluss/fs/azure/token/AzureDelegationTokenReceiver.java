@@ -27,9 +27,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
+import static org.apache.fluss.fs.azure.AzureFileSystemOptions.PROVIDER_CONFIG_NAME;
+
 /** Security token receiver for the abfs filesystem. */
 public abstract class AzureDelegationTokenReceiver implements SecurityTokenReceiver {
-    public static final String PROVIDER_CONFIG_NAME = "fs.azure.account.oauth.provider.type";
 
     private static final Logger LOG = LoggerFactory.getLogger(AzureDelegationTokenReceiver.class);
 
@@ -40,7 +41,7 @@ public abstract class AzureDelegationTokenReceiver implements SecurityTokenRecei
     public static void updateHadoopConfig(org.apache.hadoop.conf.Configuration hadoopConfig) {
         LOG.info("Updating Hadoop configuration");
 
-        String providers = hadoopConfig.get(PROVIDER_CONFIG_NAME, "");
+        String providers = hadoopConfig.get(PROVIDER_CONFIG_NAME.key(), "");
 
         if (!providers.contains(DynamicTemporaryAzureCredentialsProvider.NAME)) {
             if (providers.isEmpty()) {
@@ -50,7 +51,7 @@ public abstract class AzureDelegationTokenReceiver implements SecurityTokenRecei
                 providers = DynamicTemporaryAzureCredentialsProvider.NAME + "," + providers;
                 LOG.debug("Prepending provider, new providers value: {}", providers);
             }
-            hadoopConfig.set(PROVIDER_CONFIG_NAME, providers);
+            hadoopConfig.set(PROVIDER_CONFIG_NAME.key(), providers);
         } else {
             LOG.debug("Provider already exists");
         }

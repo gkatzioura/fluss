@@ -17,30 +17,27 @@
 
 package org.apache.fluss.fs.azure.token;
 
+import org.apache.fluss.config.Configuration;
 import org.apache.fluss.fs.token.CredentialsJsonSerde;
 import org.apache.fluss.fs.token.ObtainedSecurityToken;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.azurebfs.oauth2.AzureADAuthenticator;
 import org.apache.hadoop.fs.azurebfs.oauth2.AzureADToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.apache.fluss.fs.azure.AzureFileSystemOptions.CLIENT_ID;
+import static org.apache.fluss.fs.azure.AzureFileSystemOptions.CLIENT_SECRET;
+import static org.apache.fluss.fs.azure.AzureFileSystemOptions.ENDPOINT_KEY;
 
 /** Token provider for abfs Hadoop filesystems. */
 public class AzureDelegationTokenProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(AzureDelegationTokenProvider.class);
-
-    public static final String ACCOUNT_KEY = "fs.azure.account.key";
-    public static final String CLIENT_ID = "fs.azure.account.oauth2.client.id";
-    private static final String CLIENT_SECRET = "fs.azure.account.oauth2.client.secret";
-
-    private static final String ENDPOINT_KEY = "fs.azure.account.oauth2.client.endpoint";
 
     private final String scheme;
     private final String clientId;
@@ -57,12 +54,10 @@ public class AzureDelegationTokenProvider {
         this.authEndpoint = conf.get(ENDPOINT_KEY);
         this.additionInfos = new HashMap<>();
 
-        LOG.info("Setting the endpoint key " + ENDPOINT_KEY);
+        LOG.info("Setting the endpoint key " + ENDPOINT_KEY.key());
 
-        for (String key : Collections.singleton(ENDPOINT_KEY)) {
-            if (conf.get(key) != null) {
-                additionInfos.put(key, conf.get(key));
-            }
+        if (conf.get(ENDPOINT_KEY) != null) {
+            additionInfos.put(ENDPOINT_KEY.key(), conf.get(ENDPOINT_KEY));
         }
     }
 

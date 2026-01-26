@@ -34,9 +34,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Objects;
 
-import static org.apache.fluss.fs.azure.token.AzureDelegationTokenProvider.ACCOUNT_KEY;
-import static org.apache.fluss.fs.azure.token.AzureDelegationTokenProvider.CLIENT_ID;
-import static org.apache.fluss.fs.azure.token.AzureDelegationTokenReceiver.PROVIDER_CONFIG_NAME;
+import static org.apache.fluss.fs.azure.AzureFileSystemOptions.ACCOUNT_KEY;
+import static org.apache.fluss.fs.azure.AzureFileSystemOptions.CLIENT_ID;
+import static org.apache.fluss.fs.azure.AzureFileSystemOptions.PROVIDER_CONFIG_NAME;
 
 /**
  * Abstract factory for creating Azure Blob Storage file systems. Supports multiple URI schemes
@@ -58,11 +58,11 @@ abstract class AzureFileSystemPlugin implements FileSystemPlugin {
         // create the Azure Hadoop FileSystem
         org.apache.hadoop.fs.FileSystem fs = new AzureBlobFileSystem();
         fs.initialize(getInitURI(fsUri, hadoopConfig), hadoopConfig);
-        return new AzureFileSystem(getScheme(), fs, hadoopConfig);
+        return new AzureFileSystem(getScheme(), fs, flussConfig);
     }
 
     private void setCredentialProvider(org.apache.hadoop.conf.Configuration hadoopConfig) {
-        if (hadoopConfig.get(ACCOUNT_KEY) == null) {
+        if (hadoopConfig.get(ACCOUNT_KEY.key()) == null) {
             if (Objects.equals(getScheme(), "abfs")) {
                 AbfsDelegationTokenReceiver.updateHadoopConfig(hadoopConfig);
             } else if (Objects.equals(getScheme(), "abfss")) {
@@ -76,10 +76,10 @@ abstract class AzureFileSystemPlugin implements FileSystemPlugin {
             }
             LOG.info(
                     "{} is not set, using credential provider {}.",
-                    CLIENT_ID,
-                    hadoopConfig.get(PROVIDER_CONFIG_NAME));
+                    CLIENT_ID.key(),
+                    hadoopConfig.get(PROVIDER_CONFIG_NAME.key()));
         } else {
-            LOG.info("{} is set, using provided account key.", ACCOUNT_KEY);
+            LOG.info("{} is set, using provided account key.", ACCOUNT_KEY.key());
         }
     }
 

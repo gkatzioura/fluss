@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 
-import static org.apache.fluss.fs.azure.token.AzureDelegationTokenReceiver.PROVIDER_CONFIG_NAME;
+import static org.apache.fluss.fs.azure.AzureFileSystemOptions.PROVIDER_CONFIG_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -47,7 +47,7 @@ class AzureDelegationTokenReceiverTest {
         AzureDelegationTokenReceiver.additionInfos = null;
         org.apache.hadoop.conf.Configuration hadoopConfiguration =
                 new org.apache.hadoop.conf.Configuration();
-        hadoopConfiguration.set(PROVIDER_CONFIG_NAME, "");
+        hadoopConfiguration.set(PROVIDER_CONFIG_NAME.key(), "");
         assertThatThrownBy(
                         () -> AzureDelegationTokenReceiver.updateHadoopConfig(hadoopConfiguration))
                 .isInstanceOf(IllegalStateException.class);
@@ -57,9 +57,9 @@ class AzureDelegationTokenReceiverTest {
     void updateHadoopConfigShouldSetProviderWhenEmpty() {
         org.apache.hadoop.conf.Configuration hadoopConfiguration =
                 new org.apache.hadoop.conf.Configuration();
-        hadoopConfiguration.set(PROVIDER_CONFIG_NAME, "");
+        hadoopConfiguration.set(PROVIDER_CONFIG_NAME.key(), "");
         AzureDelegationTokenReceiver.updateHadoopConfig(hadoopConfiguration);
-        assertThat(hadoopConfiguration.get(PROVIDER_CONFIG_NAME))
+        assertThat(hadoopConfiguration.get(PROVIDER_CONFIG_NAME.key()))
                 .isEqualTo(DynamicTemporaryAzureCredentialsProvider.NAME);
     }
 
@@ -67,9 +67,9 @@ class AzureDelegationTokenReceiverTest {
     void updateHadoopConfigShouldPrependProviderWhenNotEmpty() {
         org.apache.hadoop.conf.Configuration hadoopConfiguration =
                 new org.apache.hadoop.conf.Configuration();
-        hadoopConfiguration.set(PROVIDER_CONFIG_NAME, PROVIDER_CLASS_NAME);
+        hadoopConfiguration.set(PROVIDER_CONFIG_NAME.key(), PROVIDER_CLASS_NAME);
         AzureDelegationTokenReceiver.updateHadoopConfig(hadoopConfiguration);
-        String[] providers = hadoopConfiguration.get(PROVIDER_CONFIG_NAME).split(",");
+        String[] providers = hadoopConfiguration.get(PROVIDER_CONFIG_NAME.key()).split(",");
         assertThat(providers.length).isEqualTo(2);
         assertThat(providers[0]).isEqualTo(DynamicTemporaryAzureCredentialsProvider.NAME);
         assertThat(providers[1]).isEqualTo(PROVIDER_CLASS_NAME);
@@ -80,9 +80,9 @@ class AzureDelegationTokenReceiverTest {
         org.apache.hadoop.conf.Configuration hadoopConfiguration =
                 new org.apache.hadoop.conf.Configuration();
         hadoopConfiguration.set(
-                PROVIDER_CONFIG_NAME, DynamicTemporaryAzureCredentialsProvider.NAME);
+                PROVIDER_CONFIG_NAME.key(), DynamicTemporaryAzureCredentialsProvider.NAME);
         AzureDelegationTokenReceiver.updateHadoopConfig(hadoopConfiguration);
-        assertThat(hadoopConfiguration.get(PROVIDER_CONFIG_NAME))
+        assertThat(hadoopConfiguration.get(PROVIDER_CONFIG_NAME.key()))
                 .isEqualTo(DynamicTemporaryAzureCredentialsProvider.NAME);
     }
 }
