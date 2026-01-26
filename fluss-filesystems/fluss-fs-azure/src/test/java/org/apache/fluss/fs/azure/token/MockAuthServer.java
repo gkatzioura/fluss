@@ -33,7 +33,7 @@ import org.apache.fluss.shaded.netty4.io.netty.handler.logging.LoggingHandler;
 
 import java.io.Closeable;
 
-/** Mock Netty Auth Server for facilitating the Google auth token generation. */
+/** Mock Netty Auth Server for facilitating the Azure auth token generation. */
 public class MockAuthServer implements Closeable {
 
     private final EventLoopGroup bossGroup;

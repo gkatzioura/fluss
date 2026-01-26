@@ -30,7 +30,7 @@ import org.junit.jupiter.api.BeforeAll;
 import java.io.IOException;
 import java.net.URI;
 
-/** Tests that validate the behavior of the Google Cloud Storage File System Plugin. */
+/** Tests that validate the behavior of the Azure File System Plugin. */
 class AbfsFileSystemBehaviorITCase extends FileSystemBehaviorTestSuite {
 
     private static final String CONFIG_PREFIX = "fs.azure.account";
