@@ -21,7 +21,7 @@ import org.apache.fluss.config.ConfigBuilder;
 import org.apache.fluss.config.Configuration;
 import org.apache.fluss.fs.FileSystem;
 import org.apache.fluss.fs.FileSystemPlugin;
-import org.apache.fluss.fs.azure.token.AzureDelegationTokenReceiver;
+import org.apache.fluss.fs.azure.token.*;
 
 import org.apache.hadoop.fs.azurebfs.AzureBlobFileSystem;
 import org.slf4j.Logger;
@@ -61,13 +61,13 @@ abstract class AzureFileSystemPlugin implements FileSystemPlugin {
     private void setCredentialProvider(org.apache.hadoop.conf.Configuration hadoopConfig) {
         if (hadoopConfig.get(ACCOUNT_KEY) == null) {
             if (Objects.equals(getScheme(), "abfs")) {
-                AzureDelegationTokenReceiver.updateHadoopConfig(hadoopConfig);
+                AbfsDelegationTokenReceiver.updateHadoopConfig(hadoopConfig);
             } else if (Objects.equals(getScheme(), "abfss")) {
-                AzureDelegationTokenReceiver.updateHadoopConfig(hadoopConfig);
+                AbfssDelegationTokenReceiver.updateHadoopConfig(hadoopConfig);
             } else if (Objects.equals(getScheme(), "wasb")) {
-                AzureDelegationTokenReceiver.updateHadoopConfig(hadoopConfig);
+                WasbDelegationTokenReceiver.updateHadoopConfig(hadoopConfig);
             } else if (Objects.equals(getScheme(), "wasbs")) {
-                AzureDelegationTokenReceiver.updateHadoopConfig(hadoopConfig);
+                WasbsDelegationTokenReceiver.updateHadoopConfig(hadoopConfig);
             } else {
                 throw new IllegalArgumentException("Unsupported scheme: " + getScheme());
             }

@@ -54,7 +54,7 @@ class DynamicTemporaryAzureCredentialsProviderTest {
                 new DynamicTemporaryAzureCredentialsProvider();
         Credentials credentials = new Credentials(CLIENT_ID, CLIENT_SECRET, SESSION_TOKEN);
 
-        AzureDelegationTokenReceiver receiver = new AzureDelegationTokenReceiver();
+        AzureDelegationTokenReceiver receiver = new AbfsDelegationTokenReceiver();
 
         byte[] json = CredentialsJsonSerde.toJson(credentials);
 

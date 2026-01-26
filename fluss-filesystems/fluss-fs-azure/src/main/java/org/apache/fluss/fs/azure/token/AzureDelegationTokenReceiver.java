@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 /** Security token receiver for the abfs filesystem. */
-public class AzureDelegationTokenReceiver implements SecurityTokenReceiver {
+public abstract class AzureDelegationTokenReceiver implements SecurityTokenReceiver {
     public static final String PROVIDER_CONFIG_NAME = "fs.azure.account.oauth.provider.type";
 
     private static final Logger LOG = LoggerFactory.getLogger(AzureDelegationTokenReceiver.class);
@@ -67,11 +67,6 @@ public class AzureDelegationTokenReceiver implements SecurityTokenReceiver {
         }
 
         LOG.info("Updated Hadoop configuration successfully");
-    }
-
-    @Override
-    public String scheme() {
-        return "abfs";
     }
 
     @Override
