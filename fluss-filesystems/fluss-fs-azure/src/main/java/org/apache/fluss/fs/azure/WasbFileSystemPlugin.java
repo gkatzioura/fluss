@@ -17,7 +17,15 @@
 
 package org.apache.fluss.fs.azure;
 
-/** Simple factory for the Abfs file system, registered for the <tt>wasb://</tt> scheme. */
+/**
+ * FileSystem plugin for Azure Blob Storage using the WASB (Windows Azure Storage Blob) driver.
+ * Registered for the {@code wasb://} scheme.
+ *
+ * <p>WASB is the legacy driver for accessing Azure Blob Storage. Consider using ABFS
+ * for new deployments as it provides better performance and security features.
+ *
+ * <p>URI format: {@code wasb://<container>@<storage-account>.blob.core.windows.net/<path>}
+ */
 public class WasbFileSystemPlugin extends AbfsFileSystemPlugin {
 
     @Override

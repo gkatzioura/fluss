@@ -17,7 +17,15 @@
 
 package org.apache.fluss.fs.azure;
 
-/** Simple factory for the Abfs file system, registered for the <tt>wasbs://</tt> scheme. */
+/**
+ * FileSystem plugin for Azure Blob Storage using the WASB driver with SSL/TLS encryption.
+ * Registered for the {@code wasbs://} scheme.
+ *
+ * <p>This is the secure (SSL-enabled) variant of WASB for legacy Azure Blob Storage access.
+ * For new deployments, consider using {@code abfss://} with Azure Data Lake Storage Gen2.
+ *
+ * <p>URI format: {@code wasbs://<container>@<storage-account>.blob.core.windows.net/<path>}
+ */
 public class WasbsFileSystemPlugin extends AbfsFileSystemPlugin {
 
     @Override

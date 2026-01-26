@@ -35,7 +35,15 @@ import static org.apache.fluss.fs.azure.token.AzureDelegationTokenProvider.ACCOU
 import static org.apache.fluss.fs.azure.token.AzureDelegationTokenProvider.CLIENT_ID;
 import static org.apache.fluss.fs.azure.token.AzureDelegationTokenReceiver.PROVIDER_CONFIG_NAME;
 
-/** Simple factory for the Azure File System. */
+/**
+ * FileSystem plugin for Azure Blob Storage using the ABFS (Azure Blob File System) driver.
+ * Registered for the {@code abfs://} scheme.
+ *
+ * <p>ABFS is the recommended driver for accessing Azure Data Lake Storage Gen2.
+ * Use this scheme for non-SSL connections to ADLS Gen2 storage accounts.
+ *
+ * <p>URI format: {@code abfs://<container>@<storage-account>.dfs.core.windows.net/<path>}
+ */
 public class AbfsFileSystemPlugin implements FileSystemPlugin {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbfsFileSystemPlugin.class);
