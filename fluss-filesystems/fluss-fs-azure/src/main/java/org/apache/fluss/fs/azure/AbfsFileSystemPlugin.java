@@ -55,7 +55,7 @@ public class AbfsFileSystemPlugin implements FileSystemPlugin {
 
         setCredentialProvider(hadoopConfig);
 
-        // create the Google Hadoop FileSystem
+        // create the Azure Hadoop FileSystem
         org.apache.hadoop.fs.FileSystem fs = new AzureBlobFileSystem();
         fs.initialize(getInitURI(fsUri, hadoopConfig), hadoopConfig);
         return new AzureFileSystem(getScheme(), fs, hadoopConfig);
