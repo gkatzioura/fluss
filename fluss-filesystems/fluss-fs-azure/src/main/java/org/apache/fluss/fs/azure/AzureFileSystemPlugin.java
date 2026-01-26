@@ -21,7 +21,10 @@ import org.apache.fluss.config.ConfigBuilder;
 import org.apache.fluss.config.Configuration;
 import org.apache.fluss.fs.FileSystem;
 import org.apache.fluss.fs.FileSystemPlugin;
-import org.apache.fluss.fs.azure.token.*;
+import org.apache.fluss.fs.azure.token.AbfsDelegationTokenReceiver;
+import org.apache.fluss.fs.azure.token.AbfssDelegationTokenReceiver;
+import org.apache.fluss.fs.azure.token.WasbDelegationTokenReceiver;
+import org.apache.fluss.fs.azure.token.WasbsDelegationTokenReceiver;
 
 import org.apache.hadoop.fs.azurebfs.AzureBlobFileSystem;
 import org.slf4j.Logger;
