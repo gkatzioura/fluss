@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.fluss.fs.abfs;
+package org.apache.fluss.fs.azure;
 
-/** Simple factory for the Abfs file system, registered for the <tt>wasb://</tt> scheme. */
-public class WasbFileSystemPlugin extends AbfsFileSystemPlugin {
+/** Simple factory for the Abfs file system, registered for the <tt>abfss://</tt> scheme. */
+public class AbfssFileSystemPlugin extends AbfsFileSystemPlugin {
 
     @Override
     public String getScheme() {
-        return "wasb";
+        return "abfss";
     }
 }

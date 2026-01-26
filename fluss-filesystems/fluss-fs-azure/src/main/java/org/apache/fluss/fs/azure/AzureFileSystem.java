@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-package org.apache.fluss.fs.abfs;
+package org.apache.fluss.fs.azure;
 
 import org.apache.fluss.fs.FileSystem;
-import org.apache.fluss.fs.abfs.token.AzureDelegationTokenProvider;
+import org.apache.fluss.fs.azure.token.AzureDelegationTokenProvider;
 import org.apache.fluss.fs.hdfs.HadoopFileSystem;
 import org.apache.fluss.fs.token.ObtainedSecurityToken;
 

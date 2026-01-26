@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.fluss.fs.abfs.token;
+package org.apache.fluss.fs.azure.token;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 
-import static org.apache.fluss.fs.abfs.token.AzureDelegationTokenReceiver.PROVIDER_CONFIG_NAME;
+import static org.apache.fluss.fs.azure.token.AzureDelegationTokenReceiver.PROVIDER_CONFIG_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

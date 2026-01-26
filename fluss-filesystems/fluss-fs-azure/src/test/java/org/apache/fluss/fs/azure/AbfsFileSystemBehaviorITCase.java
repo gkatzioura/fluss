@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.fluss.fs.abfs;
+package org.apache.fluss.fs.azure;
 
 import org.apache.fluss.config.Configuration;
 import org.apache.fluss.fs.FileSystem;
 import org.apache.fluss.fs.FileSystemBehaviorTestSuite;
 import org.apache.fluss.fs.FsPath;
-import org.apache.fluss.fs.abfs.token.MockAuthServer;
+import org.apache.fluss.fs.azure.token.MockAuthServer;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.AfterAll;

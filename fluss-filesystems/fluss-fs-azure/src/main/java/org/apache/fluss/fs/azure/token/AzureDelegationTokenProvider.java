@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.fluss.fs.abfs.token;
+package org.apache.fluss.fs.azure.token;
 
 import org.apache.fluss.fs.token.CredentialsJsonSerde;
 import org.apache.fluss.fs.token.ObtainedSecurityToken;

@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.fluss.fs.abfs;
+package org.apache.fluss.fs.azure;
 
 import org.apache.fluss.config.ConfigBuilder;
 import org.apache.fluss.config.Configuration;
 import org.apache.fluss.fs.FileSystem;
 import org.apache.fluss.fs.FileSystemPlugin;
-import org.apache.fluss.fs.abfs.token.AzureDelegationTokenReceiver;
+import org.apache.fluss.fs.azure.token.AzureDelegationTokenReceiver;
 
 import org.apache.hadoop.fs.azurebfs.AzureBlobFileSystem;
 import org.slf4j.Logger;
@@ -31,9 +31,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Objects;
 
-import static org.apache.fluss.fs.abfs.token.AzureDelegationTokenProvider.ACCOUNT_KEY;
-import static org.apache.fluss.fs.abfs.token.AzureDelegationTokenProvider.CLIENT_ID;
-import static org.apache.fluss.fs.abfs.token.AzureDelegationTokenReceiver.PROVIDER_CONFIG_NAME;
+import static org.apache.fluss.fs.azure.token.AzureDelegationTokenProvider.ACCOUNT_KEY;
+import static org.apache.fluss.fs.azure.token.AzureDelegationTokenProvider.CLIENT_ID;
+import static org.apache.fluss.fs.azure.token.AzureDelegationTokenReceiver.PROVIDER_CONFIG_NAME;
 
 /** Simple factory for the Azure File System. */
 public class AbfsFileSystemPlugin implements FileSystemPlugin {

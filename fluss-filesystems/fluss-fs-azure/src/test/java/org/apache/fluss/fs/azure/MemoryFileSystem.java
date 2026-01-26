@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.fluss.fs.abfs;
+package org.apache.fluss.fs.azure;
 
 import org.apache.fluss.utils.MapUtils;
 
