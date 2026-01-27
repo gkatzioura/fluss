@@ -18,6 +18,7 @@
 package org.apache.fluss.fs.azure.token;
 
 import org.apache.fluss.config.Configuration;
+import org.apache.fluss.exception.FlussRuntimeException;
 import org.apache.fluss.fs.token.CredentialsJsonSerde;
 import org.apache.fluss.fs.token.ObtainedSecurityToken;
 
@@ -26,7 +27,6 @@ import org.apache.hadoop.fs.azurebfs.oauth2.AzureADToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,8 +78,8 @@ public class AzureDelegationTokenProvider {
                     toJson(azureADToken),
                     azureADToken.getExpiry().getTime(),
                     additionInfos);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new FlussRuntimeException("Failed to obtain session credentials token", e);
         }
     }
 

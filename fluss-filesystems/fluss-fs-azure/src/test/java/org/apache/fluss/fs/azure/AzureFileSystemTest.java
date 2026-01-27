@@ -18,6 +18,7 @@
 package org.apache.fluss.fs.azure;
 
 import org.apache.fluss.config.Configuration;
+import org.apache.fluss.exception.FlussRuntimeException;
 
 import org.apache.hadoop.fs.LocalFileSystem;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,9 @@ public class AzureFileSystemTest {
         Configuration conf = new Configuration();
         AzureFileSystem fs = new AzureFileSystem("abfs", new LocalFileSystem(), conf);
 
-        assertThatThrownBy(fs::obtainSecurityToken).isInstanceOf(RuntimeException.class);
+        assertThatThrownBy(fs::obtainSecurityToken)
+                .isInstanceOf(FlussRuntimeException.class)
+                .hasMessageContaining("Failed to obtain session credentials token");
     }
 
     @Test
