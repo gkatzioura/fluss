@@ -24,6 +24,7 @@ import org.apache.fluss.fs.token.ObtainedSecurityToken;
 
 import org.apache.hadoop.fs.azurebfs.contracts.exceptions.TokenAccessProviderException;
 import org.apache.hadoop.fs.azurebfs.oauth2.AzureADToken;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -39,6 +40,13 @@ class DynamicTemporaryAzureCredentialsProviderTest {
     private static final String CLIENT_SECRET = null;
 
     private static final String SESSION_TOKEN = "sessionToken";
+
+    @AfterEach
+    void tearDown() {
+        AzureDelegationTokenReceiver.credentials = null;
+        AzureDelegationTokenReceiver.validUntil = null;
+        AzureDelegationTokenReceiver.additionInfos = null;
+    }
 
     @Test
     void getCredentialsShouldThrowExceptionWhenNoCredentials() {
