@@ -7,6 +7,22 @@ sidebar_position: 4
 
 [Azure Blob Storage](https://azure.microsoft.com/en-us/products/storage/blobs) (Azure Blob Storage) is a massively scalable and secure object storage for cloud-native workloads, archives, data lakes, HPC, and machine learning.
 
+## Install Azure FS Plugin Manually
+
+Azure Blob Storage support is not included in the default Fluss distribution. To enable Azure Blob Storage support, you need to manually install the filesystem plugin into Fluss.
+
+1. **Prepare the plugin JAR**:
+
+    - Download the `fluss-fs-azure-$FLUSS_VERSION$.jar` from the [Maven Repository](https://repo1.maven.org/maven2/org/apache/fluss/fluss-fs-obs/$FLUSS_VERSION$/fluss-fs-obs-$FLUSS_VERSION$.jar).
+
+2. **Place the plugin**: Place the plugin JAR file in the `${FLUSS_HOME}/plugins/azure/` directory:
+   ```bash
+   mkdir -p ${FLUSS_HOME}/plugins/obs/
+   cp fluss-fs-azure-$FLUSS_VERSION$.jar ${FLUSS_HOME}/plugins/azure/
+   ```
+
+3. Restart Fluss if the cluster is already running to ensure the new plugin is loaded.
+
 ## Configurations setup
 
 To enabled Azure Blob Storage as remote storage, there are some required configurations that must be added to Fluss' `server.yaml`:
