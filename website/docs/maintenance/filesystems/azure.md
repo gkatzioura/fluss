@@ -13,7 +13,7 @@ Azure Blob Storage support is not included in the default Fluss distribution. To
 
 1. **Prepare the plugin JAR**:
 
-    - Download the `fluss-fs-azure-$FLUSS_VERSION$.jar` from the [Maven Repository](https://repo1.maven.org/maven2/org/apache/fluss/fluss-fs-obs/$FLUSS_VERSION$/fluss-fs-obs-$FLUSS_VERSION$.jar).
+    - Download the `fluss-fs-azure-$FLUSS_VERSION$.jar` from the [Maven Repository](https://repo1.maven.org/maven2/org/apache/fluss/fluss-fs-azure/$FLUSS_VERSION$/fluss-fs-azure-$FLUSS_VERSION$.jar).
 
 2. **Place the plugin**: Place the plugin JAR file in the `${FLUSS_HOME}/plugins/azure/` directory:
    ```bash
