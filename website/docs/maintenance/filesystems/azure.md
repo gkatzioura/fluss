@@ -33,7 +33,7 @@ remote.data.dir: abfs://flus@flussblob.dfs.core.windows.net/path
 # the access key for the azure blob storage account
 fs.azure.account.key: 09a295d5-3da5-4435-a660-f438b331ade8
 # The oauth account provider type for Token-based Authentication
-fs.azure.account.oauth.provider.type: org.apache.fluss.fs.abfs.token.DynamicTemporaryAzureCredentialsProvider
+fs.azure.account.oauth.provider.type: org.apache.fluss.fs.azure.token.DynamicTemporaryAzureCredentialsProvider
 # The oauth2 client id for Token-based Authentication
 fs.azure.account.oauth2.client.id: ed953f8a-d5e9-481c-b355-62794f178f66
 # The oauth2 client secret for Token-based Authentication
