@@ -17,7 +17,7 @@ Azure Blob Storage support is not included in the default Fluss distribution. To
 
 2. **Place the plugin**: Place the plugin JAR file in the `${FLUSS_HOME}/plugins/azure/` directory:
    ```bash
-   mkdir -p ${FLUSS_HOME}/plugins/obs/
+   mkdir -p ${FLUSS_HOME}/plugins/azure/
    cp fluss-fs-azure-$FLUSS_VERSION$.jar ${FLUSS_HOME}/plugins/azure/
    ```
 
